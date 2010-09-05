@@ -1,0 +1,43 @@
+body
+{
+	font-size: 12px;
+}
+
+#site_info
+{
+	text-align: center;
+}
+
+dt
+{
+	font-weight: bold;
+	padding-top: 3px;
+}
+
+dd
+{
+	padding-left: 25px;
+	margin-top: -3px;
+}
+
+form.block
+{
+	display: block;
+	float: none;
+}
+
+form p label
+{
+	font-weight: bold;
+}
+
+input[type="text"], input[type="password"], textarea, select
+{
+	padding: 5px;
+}
+
+form p textarea
+{
+	width: 98%;
+	height: 125px;
+}
