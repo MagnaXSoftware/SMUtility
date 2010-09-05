@@ -3,6 +3,11 @@ body
 	font-size: 12px;
 }
 
+h1#branding
+{
+	margin-bottom: 10px;
+}
+
 #site_info
 {
 	text-align: center;
@@ -45,4 +50,21 @@ form p textarea
 {
 	width: 98%;
 	height: 125px;
+}
+
+form p label.radio
+{
+	width: auto;
+	font-weight: normal;
+}
+
+input[type="radio"], input[type="checkbox"]
+{
+	width: auto;
+	margin-left: 25px;
+}
+
+form p select 
+{
+	width: 98%;
 }

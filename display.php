@@ -2,9 +2,7 @@
 
 function display($title, $content, &$context = null) {
 	$html = _html_header($title);
-	$html .= '<div class="grid_12"><div class="box">';
 	$html .= $content;
-	$html .= '</div></div>';
 	$html .= _html_footer($context);
 	
 	header('Content-type: text-html');

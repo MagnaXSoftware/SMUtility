@@ -16,21 +16,6 @@ class AfroSoftScript_SaltGenerator {
 	public function form() {
 		return array(
 			array(
-				'label'	=> 'radio',
-				'name'	=> 'radio',
-				'type'	=> 'radio',
-				'value'	=> array(
-					array(
-						'value'	=> 'one',
-						'label'	=> 'Radio 1',
-						'checked'
-					),
-					array(
-						'value'	=> 'two',
-						'label'	=> 'Radio 2'
-					)
-				)
-			),array(
 				'label'	=> 'length',
 				'name'	=> 'length',
 				'type'	=> 'integer'
@@ -39,19 +24,23 @@ class AfroSoftScript_SaltGenerator {
 	}
 	
 	public function execute(&$form) {
-		if (!isset($form[$this->fields['length']]) || empty($form[$this->fields['length']])) {
-			$form[$this->fields['length']] = 15;
+		if (!isset($form['length']) || empty($form['length'])) {
+			$form['length'] = 15;
 		}
 		return array(
 			array(
+				'label'	=> 'salt',
 				'type'	=> 'string',
-				'value'	=> $this->generateSalt('length')
+				'value'	=> $this->generateSalt((int)$form['length'])
+			),
+			'options'	=> array(
+				'length'	=> (int)$form['length']
 			)
 		);
 	}
 
 	function generateSalt($length) {
-		$characterList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		$characterList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*?";
 		$i=0;
 		$salt = "";
 		while ($i <= $length) {
