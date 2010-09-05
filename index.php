@@ -16,7 +16,7 @@ $_GET = $clean_GET;
 $systemMeta = array(
 	'ID'		=> 'system',
 	'name'		=> 'System',
-	'version'	=> '1.0',
+	'version'	=> 'dev',
 	'author'	=> 'AfroSoft'
 );
 

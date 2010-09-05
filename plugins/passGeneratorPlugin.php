@@ -6,7 +6,7 @@ class AfroSoftScript_PassGenerator {
 		'name'		=> 'Password Generator',
 		'author'		=> 'AfroSoft',
 		'version'		=> '1.0',
-		'description'	=> 'The Password Generator generates password compliant with most system. It also features some algorithm improvements to prevent mistakes such as an \'O\' (upper-case o) and a \'0\' (zero) are confused with each other.'
+		'description'	=> 'The Password Generator generates password compliant with most system. It also features some algorithm improvements to prevent mistakes, such as when an \'O\' (upper-case o) and a \'0\' (zero) are confused with each other.'
 	);
 	
 	private $types = array(
