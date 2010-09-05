@@ -16,9 +16,20 @@ class AfroSoftScript_SaltGenerator {
 	public function form() {
 		return array(
 			array(
-				'label'	=> 'text',
-				'name'	=> 'text',
-				'type'	=> 'text'
+				'label'	=> 'radio',
+				'name'	=> 'radio',
+				'type'	=> 'radio',
+				'value'	=> array(
+					array(
+						'value'	=> 'one',
+						'label'	=> 'Radio 1',
+						'checked'
+					),
+					array(
+						'value'	=> 'two',
+						'label'	=> 'Radio 2'
+					)
+				)
 			),array(
 				'label'	=> 'length',
 				'name'	=> 'length',

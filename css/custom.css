@@ -26,9 +26,14 @@ form.block
 	float: none;
 }
 
-form p label
+form p label, form p span
 {
 	font-weight: bold;
+}
+
+form p span
+{
+	width: 98%;
 }
 
 input[type="text"], input[type="password"], textarea, select

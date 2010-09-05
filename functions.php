@@ -31,7 +31,7 @@ function generateForm($form, $plugin, $name) {
 				$html .= '/></p>';
 				break;
 			case 'hidden':
-				if (!isset($field['name'])) {
+				if (!isset($field['name']) || !isset($field['value'])) {
 					throw new Exception('Missing required field');
 				}
 				$html .= '<input type="hidden" id="' . "{$plugin}_{$field['name']}" . '" id="' . "{$plugin}_{$field['name']}" . '" ';
@@ -53,6 +53,11 @@ function generateForm($form, $plugin, $name) {
 				$html .= '</textarea></p>';
 				break;
 			case 'radio':
+				if (!isset($field['label']) || !isset($field['name']) || !isset($field['value'])) {
+					throw new Exception('Missing required field');
+				}
+				$html .= "<p><span>{$field['label']}</label>";
+				$html .= "</p>";
 				break;
 			case 'list':
 				break;
