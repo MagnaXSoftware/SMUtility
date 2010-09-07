@@ -5,7 +5,7 @@ function display($title, $content, &$context = null) {
 	$html .= $content;
 	$html .= _html_footer($context);
 	
-	header('Content-type: text-html');
+	header('Content-type: text/html');
 	echo $html;
 	return true;
 }

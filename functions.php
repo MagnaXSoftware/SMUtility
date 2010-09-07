@@ -14,12 +14,15 @@ function loadPlugin($name) {
 function generateForm($form, $plugin) {
 	$html = "<div class=\"grid_12\"><div class=\"box\"><form id=\"form_{$plugin}\" action=\"?do&amp;script={$plugin}\" method=\"post\" class=\"prefix_2 grid_8 suffix_2 alpha omega block\"><fieldset id=\"fieldset_{$plugin}\"><legend>Configuration options</legend>";
 	foreach ($form as $field) {
+		if (!isset($field['label'])) {
+			throw new Exception('Missing required field', 0);
+		}
 		$field['label'] = ucfirst($field['label']);
 		switch($field['type']) {
 			case 'string':
 			case 'integer':
 			case 'int':
-				if (!isset($field['label']) || !isset($field['name'])) {
+				if (!isset($field['name'])) {
 					throw new Exception('Missing required field', 1);
 				}
 				$html .= "<p><label for=\"{$plugin}_{$field['name']}\">{$field['label']}: </label>";
@@ -38,7 +41,7 @@ function generateForm($form, $plugin) {
 				$html .= '<input type="hidden" id="' . "{$plugin}_{$field['name']}" . '" name="' . "{$plugin}_{$field['name']}" . '" value="' . $field['value'] . '" />';
 				break;
 			case 'text':
-				if (!isset($field['label']) || !isset($field['name'])) {
+				if (!isset($field['name'])) {
 					throw new Exception('Missing required field', 3);
 				}
 				$html .= "<p><label for=\"{$plugin}_{$field['name']}\">{$field['label']}: </label>";
@@ -51,7 +54,7 @@ function generateForm($form, $plugin) {
 				$html .= '</textarea></p>';
 				break;
 			case 'radio':
-				if (!isset($field['label']) || !isset($field['name']) || !isset($field['value'])) {
+				if (!isset($field['name']) || !isset($field['value'])) {
 					throw new Exception('Missing required field', 4);
 				}
 				$html .= "<p><span>{$field['label']}: </span>";
@@ -70,7 +73,7 @@ function generateForm($form, $plugin) {
 				break;
 			case 'list':
 			case 'select':
-				if (!isset($field['label']) || !isset($field['name']) || !isset($field['value'])) {
+				if (!isset($field['name']) || !isset($field['value'])) {
 					throw new Exception('Missing required field', 6);
 				}
 				$html .= "<p><label for=\"{$plugin}_{$field['name']}\">{$field['label']}: </label>";
@@ -94,7 +97,7 @@ function generateForm($form, $plugin) {
 			case 'checkbox':
 			case 'box':
 			case 'radio':
-				if (!isset($field['label']) || !isset($field['name']) || !isset($field['value'])) {
+				if (!isset($field['name']) || !isset($field['value'])) {
 					throw new Exception('Missing required field', 8);
 				}
 				$html .= "<p><span>{$field['label']}: </span>";
