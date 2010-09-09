@@ -10,10 +10,9 @@ class AfroSoftScript_UuidGenerator {
 	);
 	
 	private $types = array(
-		array('name' => 'version 1', 'ID' => '1', 'default' => true),
 		array('name' => 'version 2', 'ID' => '2'),
 		array('name' => 'version 3', 'ID' => '3'),
-		array('name' => 'version 4', 'ID' => '4')
+		array('name' => 'version 4', 'ID' => '4', 'default' => true)
 	);
 
 	public function meta() {
@@ -58,14 +57,11 @@ class AfroSoftScript_UuidGenerator {
 				return $type['ID'];
 			}
 		}
-		return $this->types[0]['ID'];
+		return $this->types[2]['ID'];
 	}
 
 	function generateUUID($type) {
 		switch ($type) {
-			case 1:
-				throw new Exception('Not Yet Implemented');
-				break;
 			case 2:
 				throw new Exception('Not Yet Implemented');
 				break;
