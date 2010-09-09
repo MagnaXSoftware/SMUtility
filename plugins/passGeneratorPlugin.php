@@ -72,7 +72,7 @@ class AfroSoftScript_PassGenerator {
 				return $type;
 			}
 		}
-		return $this->type[0];
+		return $this->types[0];
 	}
 
 	function generatePass($length, $characterList) {

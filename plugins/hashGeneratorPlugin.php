@@ -8,10 +8,6 @@ class AfroSoftScript_HashGenerator {
 		'version'		=> '1.0',
 		'description'	=> 'The Hash Generator helps easily hash any value using different hashing algorithms.'
 	);
-	
-	private $fields = array(
-		'length'		=> 'length'
-	);
 
 	public function meta() {
 		return $this->meta;
@@ -20,32 +16,53 @@ class AfroSoftScript_HashGenerator {
 	public function form() {
 		return array(
 			array(
-				'name'	=> $this->fields['length'],
-				'type'	=> 'integer'
+				'label'	=> 'value',
+				'name'	=> 'value',
+				'type'	=> 'text'
+			), 
+			array(
+				'label'	=> 'Hash',
+				'name'	=> 'type',
+				'type'	=> 'radio',
+				'value'	=> $this->loadHashes()
 			)
 		);
 	}
 	
 	public function execute(&$form) {
-		if (!isset($form[$this->fields['length']]) || empty($form[$this->fields['length']])) {
-			$form[$this->fields['length']] = 15;
-		}
 		return array(
 			array(
+				'label'	=> 'Hashed value',
 				'type'	=> 'string',
-				'value'	=> $this->generateHash($form[$this->fields['length']])
+				'value'	=> $this->generateHash($form['value'], $form['type'])
+			),
+			'options'	=> array(
+				'Hashing algorythm'	=> strtoupper($form['type']),
+				'clear text'		=> $form['value']
 			)
 		);
 	}
-
-	function generateHash($length) {
-		$characterList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-		$i=0;
-		$salt = "";
-		while ($i <= $length) {
-			$salt .= $characterList{mt_rand(0,strlen($characterList))};
-			$i++;
+	
+	private function loadHashes() {
+		$return = array();
+		foreach (scandir(ROOT . 'plugins' . DS . 'hashGeneratorPlugin') as $item) {
+			if (preg_match('/(\w+)\.php/', $item, $matches)) {
+				$return[] = array(
+					'label'	=> strtoupper($matches[1]),
+					'value'	=> $matches[1]
+				);
+			}
 		}
-		return $salt;
+		return $return;
+	}
+
+	function generateHash($clear, $type) {
+		if (file_exists(ROOT . 'plugins' . DS . 'hashGeneratorPlugin' . DS . $type . '.php')) {
+			require_once ROOT . 'plugins' . DS . 'hashGeneratorPlugin' . DS . $type . '.php';
+			$class = "HashAddIn_" . strtoupper($type);
+			$obj = new $class;
+			return $obj->doHash($clear);
+		}
+		throw new Exception('Unknown hashing algorithm');
 	}
 }
