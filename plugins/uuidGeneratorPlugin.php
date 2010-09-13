@@ -12,7 +12,8 @@ class AfroSoftScript_UuidGenerator {
 	private $types = array(
 		array('name' => 'version 2', 'ID' => '2'),
 		array('name' => 'version 3', 'ID' => '3'),
-		array('name' => 'version 4', 'ID' => '4', 'default' => true)
+		array('name' => 'version 4', 'ID' => '4', 'default' => true),
+		array('name' => 'version 5', 'ID' => '5')
 	);
 	
 	private $ns = array(
@@ -33,20 +34,36 @@ class AfroSoftScript_UuidGenerator {
 				'name'	=> 'type',
 				'type'	=> 'radio',
 				'value'	=> $this->getOptions()
+			),
+			array(
+				'label'	=> 'Namespace <em>(Only valid for UUID version 3 or 5)</em>',
+				'name'	=> 'ns',
+				'type'	=> 'radio',
+				'value'	=> $this->getNamespaces()
+			),
+			array(
+				'label'	=> 'Name <em>(Only  valid for UUID version 3 or 5)</em>',
+				'name'	=> 'name',
+				'type'	=> 'string'
 			)
 		);
 	}
 	
 	public function execute(&$form) {
+		$options = array(
+			'UUID Version'	=> $this->getOptions(false, $form['type'])
+		);
+		if ($type == 3 || $type == 5) {
+			$options['namespace'] = $this->getNamespaces(false, $form['ns']);
+			$options['name'] = $form['name'];
+		}
 		return array(
 			array(
 				'label'	=> 'UUID',
 				'type'	=> 'string',
-				'value'	=> $this->generateUUID($form['type'])
+				'value'	=> $this->generateUUID($form['type'], $form['ns'], $form['name'])
 			),
-			'options'	=> array(
-				'UUID Version'	=> $this->getOptions(false, $form['type'])
-			)
+			'options'	=> $options
 		);
 	}
 	
@@ -66,8 +83,25 @@ class AfroSoftScript_UuidGenerator {
 		}
 		return $this->types[2]['ID'];
 	}
+	
+	function getNamespaces($form = true, $setNS = null) {
+		if ($form) {
+			$result = array();
+			foreach ($this->ns as $ns) {
+				$result[] = array('label' => $ns['name'], 'value' => $ns['ID']);
+			}
+			return $result;
+		}
 
-	function generateUUID($type) {
+		foreach ($this->ns as $ns) {
+			if ($ns['ID'] == $setNS) {
+				return $ns;
+			}
+		}
+		return $this->types[2];
+	}
+
+	function generateUUID($type, $ns = null, $name = null) {
 		$raw = array(
 			'time_low'					=> null,
 			'time_mid'					=> null,
@@ -78,14 +112,17 @@ class AfroSoftScript_UuidGenerator {
 		);
 		$uuid = null;
 		switch ($type) {
-			case 2:
+			/*case 2:
 				throw new Exception('Not Yet Implemented');
-				break;
+				break;*/
 			case 3:
 				throw new Exception('Not Yet Implemented');
 				break;
 			case 4:
 				$this->_uuid_version_4($raw);
+				break;
+			case 5:
+				throw new Exception('Not Yet Implemented');
 				break;
 			default:
 				throw new Exception('Unknown option');
