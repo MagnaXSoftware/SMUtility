@@ -6,11 +6,10 @@ class AfroSoftScript_UuidGenerator {
 		'name'		=> 'UUID Generator',
 		'author'		=> 'AfroSoft',
 		'version'		=> '1.0',
-		'description'	=> 'The UUID (or GUID) Generator generates password compliant with most system. It also features some algorithm improvements to prevent mistakes, such as when an \'O\' (upper-case o) and a \'0\' (zero) are confused with each other.'
+		'description'	=> 'The UUID (or GUID) Generator generates Universally Unique IDentifier following the version 3, 4 and 5 algorithms. '
 	);
 	
 	private $types = array(
-		array('name' => 'version 2', 'ID' => '2'),
 		array('name' => 'version 3', 'ID' => '3'),
 		array('name' => 'version 4', 'ID' => '4', 'default' => true),
 		array('name' => 'version 5', 'ID' => '5')
@@ -81,7 +80,7 @@ class AfroSoftScript_UuidGenerator {
 				return $type['ID'];
 			}
 		}
-		return $this->types[2]['ID'];
+		return $this->types[1]['ID'];
 	}
 	
 	function getNamespaces($form = true, $setNS = null) {
@@ -98,7 +97,7 @@ class AfroSoftScript_UuidGenerator {
 				return $ns;
 			}
 		}
-		return $this->types[2];
+		throw new Exception('CRITICAL ERROR: NAMESPACE NOT FOUND');
 	}
 
 	function generateUUID($type, $ns = null, $name = null) {
