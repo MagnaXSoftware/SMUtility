@@ -170,4 +170,7 @@ class AfroSoftScript_UuidGenerator {
 			)
 		);
 	}
+	
+	private function _get_uuid_from_string($string) {
+	}
 }
