@@ -2,16 +2,16 @@
 
 class SMU_UuidGenerator {	
 	private $types = array(
-		array('name' => 'version 3', 'ID' => '3', 'disabled' => true),
+		array('name' => 'version 3', 'ID' => '3'),
 		array('name' => 'version 4', 'ID' => '4', 'default' => true),
-		array('name' => 'version 5', 'ID' => '5', 'disabled' => true)
+		array('name' => 'version 5', 'ID' => '5')
 	);
 	
 	private $ns = array(
-		array('name' => 'DNS',	'ID' => 'dns', 'uuid' => ''),
-		array('name' => 'URL',	'ID' => 'url', 'uuid' => ''),
-		array('name' => 'OID',	'ID' => 'oid', 'uuid' => ''),
-		array('name' => 'X500',	'ID' => 'x500', 'uuid' => '')
+		array('name' => 'DNS',	'ID' => 'dns', 'uuid' => '6ba7b810-9dad-11d1-80b4-00c04fd430c8'),
+		array('name' => 'URL',	'ID' => 'url', 'uuid' => '6ba7b811-9dad-11d1-80b4-00c04fd430c8'),
+		array('name' => 'OID',	'ID' => 'oid', 'uuid' => '6ba7b812-9dad-11d1-80b4-00c04fd430c8'),
+		array('name' => 'X500',	'ID' => 'x500', 'uuid' => '6ba7b814-9dad-11d1-80b4-00c04fd430c8')
 	);
 	
 	public function form() {
@@ -40,15 +40,16 @@ class SMU_UuidGenerator {
 		$options = array(
 			'UUID Version'	=> $this->getOptions(false, $form['type'])
 		);
-		if ($type == 3 || $type == 5) {
-			$options['namespace'] = $this->getNamespaces(false, $form['ns']);
+		if ($form['type'] == 3 || $form['type'] == 5) {
+			$ns = $this->getNamespaces(false, $form['ns']);
+			$options['namespace'] = $ns['name'];
 			$options['name'] = $form['name'];
 		}
 		return array(
 			array(
 				'label'	=> 'UUID',
 				'type'	=> 'string',
-				'value'	=> $this->generateUUID($form['type'], $form['ns'], $form['name'])
+				'value'	=> $this->generateUUID($form['type'], ((isset($form['ns'])) ? $this->getNamespaces(false, $form['ns']) : null), ((isset($form['name'])) ? $form['name'] : null))
 			),
 			'options'	=> $options
 		);
@@ -90,26 +91,23 @@ class SMU_UuidGenerator {
 
 	function generateUUID($type, $ns = null, $name = null) {
 		$raw = array(
-			'time_low'					=> null,
-			'time_mid'					=> null,
+			'time_low'			=> null,
+			'time_mid'			=> null,
 			'time_high_and_version'		=> null,
 			'clock_sec_and_reserved'	=> null,
-			'clock_sec_low'				=> null,
-			'node'						=> null
+			'clock_sec_low'			=> null,
+			'node'				=> null
 		);
 		$uuid = null;
 		switch ($type) {
-			/*case 2:
-				throw new Exception('Not Yet Implemented');
-				break;*/
 			case 3:
-				throw new Exception('Not Yet Implemented');
+				$this->_uuid_version_3($raw, $ns, $name);
 				break;
 			case 4:
 				$this->_uuid_version_4($raw);
 				break;
 			case 5:
-				throw new Exception('Not Yet Implemented');
+				$this->_uuid_version_5($raw, $ns, $name);
 				break;
 			default:
 				throw new Exception('Unknown option');
@@ -130,32 +128,81 @@ class SMU_UuidGenerator {
 					   $raw['clock_sec_low']
 					   );
 		foreach ($raw['node'] as $node) {
-			$uuid .= sprintf('%02x', $node);
+			$uuid .= sprintf('%04x', $node);
 		}
-		
-		var_dump($uuid, $raw);
 		
 		return $uuid;
 	}
 	
-	private function _uuid_version_4(&$raw) {
+	private function _uuid_version_3(&$raw, $ns, $name) {
+		$nsbin = $this->_str_to_bin($ns['uuid']);
+		$hash = md5($nsbin.$name);
+
 		$raw = array(
-			'time_low'					=> array(
-				mt_rand(0, 0xffff),
-				mt_rand(0, 0xffff)
+			'time_low'			=> array(
+				hexdec(substr($hash, 0, 4)),
+				hexdec(substr($hash, 4, 4))
 			),
-			'time_mid'					=> mt_rand(0, 0xffff),
-			'time_high_and_version'		=> mt_rand(0, 0x0fff) | 0x4000,
-			'clock_sec_and_reserved'	=> mt_rand(0, 0x3f) | 0x80,
-			'clock_sec_low'				=> mt_rand(0, 0xff),
-			'node'						=> array(
-				mt_rand(0, 0xff),
-				mt_rand(0, 0xff),
-				mt_rand(0, 0xff),
-				mt_rand(0, 0xff),
-				mt_rand(0, 0xff),
-				mt_rand(0, 0xff)
+			'time_mid'			=> hexdec(substr($hash, 8, 4)),
+			'time_high_and_version'		=> (hexdec(substr($hash, 12, 4)) & 0x0fff) | 0x3000,
+			'clock_sec_and_reserved'	=> (hexdec(substr($hash, 16, 2)) & 0x3f) | 0x80,
+			'clock_sec_low'			=> hexdec(substr($hash, 18, 2)),
+			'node'				=> array(
+				hexdec(substr($hash, 20, 4)),
+				hexdec(substr($hash, 24, 4)),
+				hexdec(substr($hash, 28, 4)),
 			)
 		);
 	}
+	
+	private function _uuid_version_4(&$raw) {
+		$raw = array(
+			'time_low'			=> array(
+				mt_rand(0, 0xffff),
+				mt_rand(0, 0xffff)
+			),
+			'time_mid'			=> mt_rand(0, 0xffff),
+			'time_high_and_version'		=> mt_rand(0, 0x0fff) | 0x4000,
+			'clock_sec_and_reserved'	=> mt_rand(0, 0x3f) | 0x80,
+			'clock_sec_low'			=> mt_rand(0, 0xff),
+			'node'				=> array(
+				mt_rand(0, 0xffff),
+				mt_rand(0, 0xffff),
+				mt_rand(0, 0xffff),
+			)
+		);
+	}
+	
+	private function _uuid_version_5(&$raw, $ns, $name) {
+		$nsbin = $this->_str_to_bin($ns['uuid']);
+		$hash = sha1($nsbin.$name);
+
+		$raw = array(
+			'time_low'			=> array(
+				hexdec(substr($hash, 0, 4)),
+				hexdec(substr($hash, 4, 4))
+			),
+			'time_mid'			=> hexdec(substr($hash, 8, 4)),
+			'time_high_and_version'		=> (hexdec(substr($hash, 12, 4)) & 0x0fff) | 0x5000,
+			'clock_sec_and_reserved'	=> (hexdec(substr($hash, 16, 2)) & 0x3f) | 0x80,
+			'clock_sec_low'			=> hexdec(substr($hash, 18, 2)),
+			'node'				=> array(
+				hexdec(substr($hash, 20, 4)),
+				hexdec(substr($hash, 24, 4)),
+				hexdec(substr($hash, 28, 4)),
+			)
+		);
+	}
+
+	private function _str_to_bin($uuid) {
+		$hex = str_replace(array('-','{','}'), '', $uuid);
+		$bin = '';
+
+		for ($i = 0, $max = strlen($hex); $i < $max; $i += 2) {
+			$bin .= chr(hexdec($hex[$i].$hex[$i + 1]));
+		}
+
+		return $bin;
+	}
+
 }

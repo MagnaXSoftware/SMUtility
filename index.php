@@ -62,7 +62,6 @@ if (isset($_GET['script']) && !empty($_GET['script'])) {
 				$pluginValues[str_replace($_GET['script'] . '_', "", $key)] = $value;
 			}
 		}
-		var_dump($_POST, $pluginValues);
 		try {
 			$content = generateResult($obj->execute($pluginValues));
 		} catch (Exception $e) {
