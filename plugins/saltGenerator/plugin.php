@@ -1,18 +1,6 @@
 <?php
 
-class AfroSoftScript_SaltGenerator {
-	private $meta = array(
-		'ID'			=> 'saltGenerator',
-		'name'			=> 'Salt Generator',
-		'author'		=> 'AfroSoft',
-		'version'		=> '1.0',
-		'description'	=> 'The Salt Generator plugin enables the creation of a valid salt of any arbitrary value bigger than 0.'
-	);
-
-	public function meta() {
-		return $this->meta;
-	}
-	
+class SMU_SaltGenerator {
 	public function form() {
 		return array(
 			array(

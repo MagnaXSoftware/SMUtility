@@ -89,4 +89,3 @@ foreach (scandir(ROOT . 'plugins') as $item) {
 $content .= "</ul>";
 
 display('Script List', HTML::grid(HTML::box($content)));
-var_dump(scandir(ROOT . 'plugins'));

@@ -1,14 +1,6 @@
 <?php
 
-class AfroSoftScript_PassGenerator {
-	private $meta = array(
-		'ID'		=> 'passGenerator',
-		'name'		=> 'Password Generator',
-		'author'		=> 'AfroSoft',
-		'version'		=> '1.0',
-		'description'	=> 'The Password Generator generates password compliant with most system. It also features some algorithm improvements to prevent mistakes, such as when an \'O\' (upper-case o) and a \'0\' (zero) are confused with each other.'
-	);
-	
+class SMU_PassGenerator {
 	private $types = array(
 		array('name' => 'alphanumeric corrected', 'ID' => '0', 'value' => 'abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ23456789', 'default' => true),
 		array('name' => 'alphanumeric full', 'ID' => '1', 'value' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'),
@@ -19,10 +11,6 @@ class AfroSoftScript_PassGenerator {
 		array('name' => 'numeric', 'ID' => '6', 'value' => '0123456789')
 	);
 
-	public function meta() {
-		return $this->meta;
-	}
-	
 	public function form() {
 		return array(
 			array(
@@ -62,7 +50,7 @@ class AfroSoftScript_PassGenerator {
 		if ($form) {
 			$result = array();
 			foreach ($this->types as $type) {
-				$result[] = array('label' => $type['name'], 'value' => $type['ID'], 'checked' => $type['default']);
+				$result[] = array('label' => $type['name'], 'value' => $type['ID'], 'checked' => ((isset($type['default'])) ? $type['default'] : false), 'disabled' => ((isset($type['disabled'])) ? $type['disabled'] : false));
 			}
 			return $result;
 		}

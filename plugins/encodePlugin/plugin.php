@@ -1,18 +1,6 @@
 <?php
 
-class AfroSoftScript_Encode {
-	private $meta = array(
-		'ID'			=> 'encode',
-		'name'			=> 'String Encoder',
-		'author'		=> 'AfroSoft',
-		'version'		=> '1.0',
-		'description'	=> 'The String Encoder helps easily encode any value using different encoding algorithms.'
-	);
-
-	public function meta() {
-		return $this->meta;
-	}
-	
+class SMU_Encode {
 	public function form() {
 		return array(
 			array(
@@ -45,7 +33,7 @@ class AfroSoftScript_Encode {
 	
 	private function loadEncs() {
 		$return = array();
-		foreach (scandir(ROOT . 'plugins' . DS . 'encodePlugin') as $item) {
+		foreach (scandir(ROOT . 'plugins' . DS . 'encodePlugin' . DS . 'algos') as $item) {
 			if (preg_match('/(\w+)\.php/', $item, $matches)) {
 				$return[] = array(
 					'label'	=> strtoupper($matches[1]),
@@ -57,8 +45,9 @@ class AfroSoftScript_Encode {
 	}
 
 	function encode($clear, $type) {
-		if (file_exists(ROOT . 'plugins' . DS . 'encodePlugin' . DS . $type . '.php')) {
-			require_once ROOT . 'plugins' . DS . 'encodePlugin' . DS . $type . '.php';
+		$file = ROOT . 'plugins' . DS . 'encodePlugin' . DS . 'algos' . DS . $type . '.php';
+		if (file_exists($file)) {
+			require_once $file;
 			$class = "EncodeAddIn_" . strtoupper($type);
 			$obj = new $class;
 			return $obj->encode($clear);

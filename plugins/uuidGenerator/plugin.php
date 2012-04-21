@@ -13,10 +13,6 @@ class SMU_UuidGenerator {
 		array('name' => 'OID',	'ID' => 'oid', 'uuid' => ''),
 		array('name' => 'X500',	'ID' => 'x500', 'uuid' => '')
 	);
-
-	public function meta() {
-		return parse_ini_file('plugin.meta');
-	}
 	
 	public function form() {
 		return array(

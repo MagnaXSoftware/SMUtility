@@ -1,0 +1,6 @@
+ID		= decode
+name		= String Decoder
+author		= AfroSoft
+version		= 1.1
+description	= 'The String Decoder helps easily decode any value using different encoding algorithms.'
+category	= coder

@@ -1,18 +1,6 @@
 <?php
 
-class AfroSoftScript_Decode {
-	private $meta = array(
-		'ID'			=> 'decode',
-		'name'			=> 'String Decoder',
-		'author'		=> 'AfroSoft',
-		'version'		=> '1.0',
-		'description'	=> 'The String Decoder helps easily decode any value using different encoding algorithms.'
-	);
-
-	public function meta() {
-		return $this->meta;
-	}
-	
+class SMU_Decode {
 	public function form() {
 		return array(
 			array(
@@ -45,7 +33,7 @@ class AfroSoftScript_Decode {
 	
 	private function loadDecs() {
 		$return = array();
-		foreach (scandir(ROOT . 'plugins' . DS . 'decodePlugin') as $item) {
+		foreach (scandir(ROOT . 'plugins' . DS . 'decodePlugin' . DS . 'algos') as $item) {
 			if (preg_match('/(\w+)\.php/', $item, $matches)) {
 				$return[] = array(
 					'label'	=> strtoupper($matches[1]),
@@ -57,8 +45,9 @@ class AfroSoftScript_Decode {
 	}
 
 	function decode($clear, $type) {
-		if (file_exists(ROOT . 'plugins' . DS . 'decodePlugin' . DS . $type . '.php')) {
-			require_once ROOT . 'plugins' . DS . 'decodePlugin' . DS . $type . '.php';
+		$file = ROOT . 'plugins' . DS . 'decodePlugin' . DS . 'algos' . DS . $type . '.php';
+		if (file_exists($file)) {
+			require_once $file;
 			$class = "DecodeAddIn_" . strtoupper($type);
 			$obj = new $class;
 			return $obj->decode($clear);

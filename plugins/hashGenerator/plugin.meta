@@ -1,0 +1,6 @@
+ID		= hashGenerator
+name		= Hash Generator
+author		= AfroSoft
+version		= 1.1
+description	= 'The Hash Generator helps easily hash any value using different hashing algorithms.'
+category	= generator
