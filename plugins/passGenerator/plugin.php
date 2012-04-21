@@ -2,6 +2,7 @@
 /**
  * Password Generator
  */
+
 /**
  * Require plugin interfaces.
  */
