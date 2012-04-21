@@ -15,6 +15,7 @@ require_once ROOT . 'plugins.php';
  * @subpackage HashGenerator
  */
 class SMU_HashGenerator extends SMU_Plugin {
+
     /**
      * Returns a multidimentional array used to build the configuration page.
      *
