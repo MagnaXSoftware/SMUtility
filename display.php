@@ -8,16 +8,7 @@
  */
 
 /**
- * @deprecated use HTML::display() instead
- * @see HTML::display()
- * @throws Exception
- */
-function display($title, $content, &$context = null) {
-    throw new Exception('DEPRECATED');
-}
-
-/**
- * HTML class handles the generation and display of HTML markup.
+ * Handles the generation and display of HTML markup.
  *
  * @package Core
  * @subpackage Display
@@ -27,15 +18,17 @@ class HTML {
     /**
      * Generates and display a complete HTML page.
      *
+     * @uses self::_header()
+     * @uses self::_footer()
      * @param string $title Title of the page
      * @param string $content The main content of the page
      * @param array $context Metadata on the current plugin, if relevant
      * @return boolean
      */
     public static function display($title, $content, &$context = null) {
-        $html = _html_header($title);
+        $html = self::_header($title);
         $html .= $content;
-        $html .= _html_footer($context);
+        $html .= self::_footer($context);
 
         header('Content-type: text/html');
         echo $html;
@@ -263,14 +256,16 @@ class HTML {
         $html .= self::wrap('dl', $html_r) . '</div></div></div>';
         return $html;
     }
-}
 
-/**
- * @todo deprecate & move to HTML
- */
-function _html_header($title) {
-    $titleHead = (empty($title)) ? 'SMUtility' : $title . ' :: SMUtility';
-    return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    /**
+     * Generates the header of the page.
+     *
+     * @param string $title Title of the page or null/empty
+     * @return string
+     */
+    private static function _header($title) {
+        $titleHead = (empty($title)) ? 'SMUtility' : $title . ' :: SMUtility';
+        return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 <head>
 <title>' . $titleHead . '</title>
@@ -287,18 +282,21 @@ function _html_header($title) {
 <div class="container_12">
 <div class="grid_12"><h1 id="branding">' . $title . '</h1></div>
 <div class="clear"></div>';
-}
-
-/**
- * @todo deprecate & move to HTML
- */
-function _html_footer(&$meta) {
-    $link = "";
-    if (!empty($meta)) {
-        $link .= '<li><a href="?script=' . $meta['ID'] . '">' . $meta['name'] . '</a></li>';
-        $link .= '<li><a href="?info&amp;script=' . $meta['ID'] . '">' . $meta['name'] . ' Info</a></li>';
     }
-    return '<div class="clear"></div>
+
+    /**
+     * Generates the footer of a page.
+     *
+     * @param array $meta Metadata of the current loaded plugin or null
+     * @return string
+     */
+    private static function _footer(&$meta) {
+        $link = "";
+        if (!empty($meta)) {
+            $link .= '<li><a href="?script=' . $meta['ID'] . '">' . $meta['name'] . '</a></li>';
+            $link .= '<li><a href="?info&amp;script=' . $meta['ID'] . '">' . $meta['name'] . ' Info</a></li>';
+        }
+        return '<div class="clear"></div>
 <div id="footer_link" class="grid_12"><ul class="nav"><li><a href="?">Script List (home)</a></li>' . $link . '<li><a href="?info&amp;script=core">System Info</a></li></ul></div>
 <div class="clear"></div>
 <div id="site_info" class="grid_12"><div class="box"><p>Copyrigth &copy; 2010-2012 AfroSoft</p></div></div>
@@ -306,4 +304,5 @@ function _html_footer(&$meta) {
 </div>
 </body>
 </html>';
+    }
 }
