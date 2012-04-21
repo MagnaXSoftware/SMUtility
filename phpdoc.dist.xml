@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+    <title>SMUtility</title>
+    <parser>
+        <!-- All the core files have a package defined, so if a file doesn't
+            have a package, it's most likely a plugin. -->
+        <default-package-name>Plugin</default-package-name>
+        <target>docs/structure</target>
+    </parser>
+    <transformer>
+        <target>docs</target>
+    </transformer>
+    <files>
+        <file>*.php</file>
+        <directory>css</directory>
+        <directory>plugins</directory>
+        <ignore>test/*</ignore>
+        <ignore>docs/*</ignore>
+        <ignore>nbproject/*</ignore>
+    </files>
+</phpdoc>
