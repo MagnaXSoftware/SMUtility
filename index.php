@@ -7,12 +7,14 @@ require_once ROOT . 'display.php';
 require_once ROOT . 'functions.php';
 
 /* clean input. only allow alphanumerics */
+/* we do not clean the input, as plugins might need non alphanumeric characters passed as post
 $clean_GET = array();
 foreach ($_GET as $key => $value) {
 	$clean_GET[preg_replace("/[^a-zA-Z0-9]/", "", $key)] = preg_replace("/[^a-zA-Z0-9]/", "", $value);
 }
 unset($_GET);
 $_GET = $clean_GET;
+//*/
 
 $systemMeta = array(
 	'ID'		=> 'core',
@@ -26,21 +28,26 @@ $systemMeta = array(
 if (isset($_GET['info']) && isset($_GET['script']) && !empty($_GET['script'])) {
 	if ($_GET['script'] == 'core') {
 		$meta = $systemMeta;
+		$context = false;
 	} else {
 		try {
-		$meta = loadMeta($_GET['script']);
+			$meta = Load::meta($_GET['script']);
 		} catch (Exception $e) {
 			display('Error', HTML::grid(HTML::box($e->getMessage())));
 			exit();
 		}
+		$context = true;
 	}
 	ksort($meta);
-	$content = "<dl>";
+	$content = "";
 	foreach ($meta as $key => $value) {
 		$content .= "<dt>{$key}</dt><dd>{$value}</dd>";
 	}
-	$content .= "</dl>";
-	display($meta['name'] . ' Info', HTML::grid(HTML::box($content)), $meta);
+	if ($context == true) {
+		display($meta['name'] . ' Info', HTML::grid(HTML::box(HTML::wrap('dl', $content))), $meta);
+	} else {
+		display($meta['name'] . ' Info', HTML::grid(HTML::box(HTML::wrap('dl', $content))));
+	}
 	exit();
 }
 
@@ -49,8 +56,8 @@ if (isset($_GET['info']) && isset($_GET['script']) && !empty($_GET['script'])) {
 
 if (isset($_GET['script']) && !empty($_GET['script'])) {
 	try {
-		$obj = loadPlugin($_GET['script']);
-		$meta = loadMeta($_GET['script']);
+		$obj = Load::plugin($_GET['script']);
+		$meta = Load::meta($_GET['script']);
 	} catch (Exception $e) {
 		display('Error', HTML::grid(HTML::box($e->getMessage())));
 		exit();
@@ -63,28 +70,27 @@ if (isset($_GET['script']) && !empty($_GET['script'])) {
 			}
 		}
 		try {
-			$content = generateResult($obj->execute($pluginValues));
+			$content = Generate::result($obj->execute($pluginValues));
 		} catch (Exception $e) {
 			display('Error', HTML::grid(HTML::box($e->getMessage())));
 			exit();
 		}
 	} else {
-		$content = generateForm($obj->form(), $meta['ID']);
+		$content = Generate::form($obj->form(), $meta['ID']);
 	}
 	display($meta['name'], $content, $meta);
 	exit();
 }
 
 
-/* as a failsafe load each plugin one by one and display them as a list. */
-
-$content = "<ul>";
+/* nothing matched so display index */
+$content = "";
 foreach (scandir(ROOT . 'plugins') as $item) {
 	try {
-		$meta = loadMeta($item);
+		$meta = Load::meta($item);
+		
 		$content .= '<li><a href="?script=' . $meta['ID'] . '">' . $meta['name'] . '</a> - <a href="?info&amp;script=' . $meta['ID'] . '">Info</a></li>';
 	} catch (Exception $e) {}
 }
-$content .= "</ul>";
 
-display('Script List', HTML::grid(HTML::box($content)));
+display('Script List', HTML::grid(HTML::box(HTML::wrap('ul',$content))));

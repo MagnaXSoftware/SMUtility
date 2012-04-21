@@ -12,20 +12,20 @@ function display($title, $content, &$context = null) {
 
 class HTML {
 	static function box($content) {
-		return "<div class=\"box\">" . $content . "</div>";
+		return "<div class=\"box\">{$content}</div>";
 	}
 
-	static function grid($content, $size=12) {
-		return "<div class=\"grid_{$size}\">" . $content . "</div>";
+	static function grid($content, $size=12, $options='id="main"') {
+		return (empty($options)) ? "<div class=\"grid_{$size}\">{$content}</div>" : "<div class=\"grid_{$size}\" {$options}>{$content}</div>";
 	}
 
-	static function warp($tag, $content, $options="") {
-		return "<{$tag} {$options}>{$content}</{$tag}>";
+	static function wrap($tag, $content, $options=null) {
+		return (empty($options)) ? "<{$tag}>{$content}</{$tag}>" : "<{$tag} {$options}>{$content}</{$tag}>";
 	}
 }
 
 function _html_header($title) {
-	$titleHead = (empty($title)) ? 'AfroSoft Script Management Utility' : $title . ' :: AfroSoft Script Management Utility';
+	$titleHead = (empty($title)) ? 'SMUtility' : $title . ' :: SMUtility';
 	return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 <head>
@@ -52,7 +52,7 @@ function _html_footer(&$meta) {
 		$link .= '<li><a href="?info&amp;script=' . $meta['ID'] . '">' . $meta['name'] . ' Info</a></li>';
 	}
 	return '<div class="clear"></div>
-<div id="footer_link" class="grid_12"><ul class="nav"><li><a href="?">Script List (home)</a></li>' . $link . '<li><a href="?info&amp;script=system">System Info</a></li></ul></div>
+<div id="footer_link" class="grid_12"><ul class="nav"><li><a href="?">Script List (home)</a></li>' . $link . '<li><a href="?info&amp;script=core">System Info</a></li></ul></div>
 <div class="clear"></div>
 <div id="site_info" class="grid_12"><div class="box"><p>Copyrigth &copy; 2010-2012 AfroSoft</p></div></div>
 <div class="clear"></div>

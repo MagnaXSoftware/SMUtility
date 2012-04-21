@@ -1,70 +1,68 @@
-body
-{
+body {
 	font-size: 12px;
 }
 
-h1#branding
-{
-	margin-bottom: 10px;
+div#main, .main {
+	font-size: 120%;
 }
 
-#site_info
-{
+.mid_main {
+	font-size: 110%;
+}
+
+h1#branding {
+	margin-bottom: 10px;
+	color: #FFFFFF;
+	background: #333333;
+}
+
+#site_info {
 	text-align: center;
 }
 
-dt
-{
+dt {
 	font-weight: bold;
 	padding-top: 3px;
 }
 
-dd
-{
+dd {
 	padding-left: 25px;
 	margin-top: -3px;
 }
 
-form.block
-{
+form.block {
 	display: block;
 	float: none;
+	padding-bottom: 20px;
 }
 
-form p label, form p span
-{
+form p label, form p span {
 	font-weight: bold;
 }
 
-form p span
-{
+form p span {
 	width: 98%;
 }
 
-input[type="text"], input[type="password"], textarea, select
-{
+input[type="text"], input[type="password"], textarea, select {
 	padding: 5px;
 }
 
-form p textarea
-{
+form p textarea {
 	width: 98%;
 	height: 125px;
 }
 
-form p label.radio
-{
+form p label.radio {
 	width: auto;
 	font-weight: normal;
 }
 
-input[type="radio"], input[type="checkbox"]
-{
+input[type="radio"], input[type="checkbox"] {
 	width: auto;
 	margin-left: 25px;
 }
 
-form p select 
-{
+form p select  {
 	width: 98%;
 }

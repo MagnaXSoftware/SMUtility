@@ -1,6 +1,6 @@
 <?php
 
-class SMU_Encode {
+class SMU_Decode {
 	public function form() {
 		return array(
 			array(
@@ -12,7 +12,7 @@ class SMU_Encode {
 				'label'	=> 'Encodings',
 				'name'	=> 'type',
 				'type'	=> 'radio',
-				'value'	=> $this->loadEncs()
+				'value'	=> $this->loadDecs()
 			)
 		);
 	}
@@ -20,20 +20,20 @@ class SMU_Encode {
 	public function execute(&$form) {
 		return array(
 			array(
-				'label'	=> 'Encoded value',
+				'label'	=> 'Decoded value',
 				'type'	=> 'string',
-				'value'	=> $this->encode($form['value'], $form['type'])
+				'value'	=> $this->decode($form['value'], $form['type'])
 			),
 			'options'	=> array(
 				'Encoding algorythm'	=> strtoupper($form['type']),
-				'clear text'		=> $form['value']
+				'Encoded value'		=> $form['value']
 			)
 		);
 	}
 	
-	private function loadEncs() {
+	private function loadDecs() {
 		$return = array();
-		foreach (scandir(ROOT . 'plugins' . DS . 'encodePlugin' . DS . 'algos') as $item) {
+		foreach (scandir(ROOT . 'plugins' . DS . 'decode' . DS . 'algos') as $item) {
 			if (preg_match('/(\w+)\.php/', $item, $matches)) {
 				$return[] = array(
 					'label'	=> strtoupper($matches[1]),
@@ -44,13 +44,13 @@ class SMU_Encode {
 		return $return;
 	}
 
-	function encode($clear, $type) {
-		$file = ROOT . 'plugins' . DS . 'encodePlugin' . DS . 'algos' . DS . $type . '.php';
+	function decode($clear, $type) {
+		$file = ROOT . 'plugins' . DS . 'decode' . DS . 'algos' . DS . $type . '.php';
 		if (file_exists($file)) {
 			require_once $file;
-			$class = "EncodeAddIn_" . strtoupper($type);
+			$class = "DecodeAddIn_" . strtoupper($type);
 			$obj = new $class;
-			return $obj->encode($clear);
+			return $obj->decode($clear);
 		}
 		throw new Exception('Unknown encoding algorithm');
 	}
