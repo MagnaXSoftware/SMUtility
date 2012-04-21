@@ -10,6 +10,20 @@ function display($title, $content, &$context = null) {
 	return true;
 }
 
+class HTML {
+	static function box($content) {
+		return "<div class=\"box\">" . $content . "</div>";
+	}
+
+	static function grid($content, $size=12) {
+		return "<div class=\"grid_{$size}\">" . $content . "</div>";
+	}
+
+	static function warp($tag, $content, $options="") {
+		return "<{$tag} {$options}>{$content}</{$tag}>";
+	}
+}
+
 function _html_header($title) {
 	$titleHead = (empty($title)) ? 'AfroSoft Script Management Utility' : $title . ' :: AfroSoft Script Management Utility';
 	return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,16 +45,16 @@ function _html_header($title) {
 <div class="clear"></div>';
 }
 
-function _html_footer(&$context) {
+function _html_footer(&$meta) {
 	$link = "";
-	if (!empty($context) && method_exists($context, 'meta')) {
-		$meta = $context->meta();
-		$link = '<li><a href="?info&amp;script=' . $meta['ID'] . '">' . $meta['name'] . ' Info</a></li>';
+	if (!empty($meta)) {
+		$link .= '<li><a href="?script=' . $meta['ID'] . '">' . $meta['name'] . '</a></li>';
+		$link .= '<li><a href="?info&amp;script=' . $meta['ID'] . '">' . $meta['name'] . ' Info</a></li>';
 	}
 	return '<div class="clear"></div>
 <div id="footer_link" class="grid_12"><ul class="nav"><li><a href="?">Script List (home)</a></li>' . $link . '<li><a href="?info&amp;script=system">System Info</a></li></ul></div>
 <div class="clear"></div>
-<div id="site_info" class="grid_12"><div class="box"><p>Copyrigth &copy; 2010 AfroSoft</p></div></div>
+<div id="site_info" class="grid_12"><div class="box"><p>Copyrigth &copy; 2010-2012 AfroSoft</p></div></div>
 <div class="clear"></div>
 </div>
 </body>

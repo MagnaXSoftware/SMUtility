@@ -1,18 +1,10 @@
 <?php
 
-class AfroSoftScript_UuidGenerator {
-	private $meta = array(
-		'ID'		=> 'uuidGenerator',
-		'name'		=> 'UUID Generator',
-		'author'		=> 'AfroSoft',
-		'version'		=> '1.0',
-		'description'	=> 'The UUID (or GUID) Generator generates Universally Unique IDentifier following the version 3, 4 and 5 algorithms. '
-	);
-	
+class SMU_UuidGenerator {	
 	private $types = array(
-		array('name' => 'version 3', 'ID' => '3'),
+		array('name' => 'version 3', 'ID' => '3', 'disabled' => true),
 		array('name' => 'version 4', 'ID' => '4', 'default' => true),
-		array('name' => 'version 5', 'ID' => '5')
+		array('name' => 'version 5', 'ID' => '5', 'disabled' => true)
 	);
 	
 	private $ns = array(
@@ -23,7 +15,7 @@ class AfroSoftScript_UuidGenerator {
 	);
 
 	public function meta() {
-		return $this->meta;
+		return parse_ini_file('plugin.meta');
 	}
 	
 	public function form() {
@@ -70,7 +62,7 @@ class AfroSoftScript_UuidGenerator {
 		if ($form) {
 			$result = array();
 			foreach ($this->types as $type) {
-				$result[] = array('label' => $type['name'], 'value' => $type['ID'], 'checked' => $type['default']);
+				$result[] = array('label' => $type['name'], 'value' => $type['ID'], 'checked' => ((isset($type['default'])) ? $type['default'] : false), 'disabled' => ((isset($type['disabled'])) ? $type['disabled'] : false));
 			}
 			return $result;
 		}
@@ -169,8 +161,5 @@ class AfroSoftScript_UuidGenerator {
 				mt_rand(0, 0xff)
 			)
 		);
-	}
-	
-	private function _get_uuid_from_string($string) {
 	}
 }

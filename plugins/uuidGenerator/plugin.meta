@@ -1,0 +1,5 @@
+ID		= uuidGenerator
+name		= UUID Generator
+author		= AfroSoft
+version		= 1.5
+description	= 'The UUID (or GUID) Generator generates Universally Unique IDentifier following the version 3, 4 and 5 algorithms.'

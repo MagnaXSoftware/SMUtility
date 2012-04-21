@@ -1,18 +1,27 @@
 <?php
 
 function loadPlugin($name) {
-	$file = ROOT . 'plugins' . DS . $name . 'Plugin.php';
+	$file = ROOT . 'plugins' . DS . $name . DS . 'plugin.php';
 	if (!file_exists($file)) {
-		display('Error', "<div class=\"grid_12\"><div class=\"box\">The specified plugin '{$name}' hasn't been installed in this system.</div></div>");
+		throw new Exception("The specified plugin '{$name}' hasn't been installed in this system.");
 		exit();
 	}
 	require_once $file;
-	$class = 'AfroSoftScript_' . ucfirst($name);
+	$class = 'SMU_' . ucfirst($name);
 	return new $class;
 }
 
+function loadMeta($name) {
+	$file = ROOT . 'plugins' . DS . $name . DS . 'plugin.meta';
+	if (!file_exists($file)) {
+		throw new Exception("The specified plugin '{$name}' doesn't have any metadata.");
+	}
+	return parse_ini_file($file);
+}
+
+
 function generateForm($form, $plugin) {
-	$html = "<div class=\"grid_12\"><div class=\"box\"><form id=\"form_{$plugin}\" action=\"?do&amp;script={$plugin}\" method=\"post\" class=\"prefix_2 grid_8 suffix_2 alpha omega block\"><fieldset id=\"fieldset_{$plugin}\"><legend>Configuration options</legend>";
+	$html = "<form id=\"form_{$plugin}\" action=\"?do&amp;script={$plugin}\" method=\"post\" class=\"prefix_2 grid_8 suffix_2 alpha omega block\"><fieldset id=\"fieldset_{$plugin}\"><legend>Configuration options</legend>";
 	foreach ($form as $field) {
 		if (!isset($field['label'])) {
 			throw new Exception('Missing required field', 0);
@@ -121,8 +130,8 @@ function generateForm($form, $plugin) {
 		}
 	}
 	$html .= '</fieldset><input type="reset" value="Reset" /><input type="submit" value="Submit" name="submit" id="submit" />';
-	$html .= "</form></div></div>";
-	return $html;
+	$html .= "</form>";
+	return HTML::grid(HTML::box($html));
 }
 
 function generateResult($results) {
