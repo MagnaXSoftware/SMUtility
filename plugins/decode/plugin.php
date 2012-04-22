@@ -94,10 +94,21 @@ class SMU_Decode extends SMU_Plugin {
         $file = ROOT . 'plugins' . DS . 'decode' . DS . 'algos' . DS . $type . '.php';
         if (file_exists($file)) {
             require_once $file;
-            $class = "DecodeAddIn_" . strtoupper($type);
+            $class = "Algo_" . strtoupper($type);
             $obj = new $class;
             return $obj->decode($clear);
         }
-        throw new Exception('Unknown encoding algorithm');
+        throw new Exception('Unknown decoding algorithm');
     }
+}
+
+/**
+ * Interface that decodable algorithms must implement.
+ */
+interface Enc_Decodable {
+
+    /**
+     * Does the decoding.
+     */
+    public function decode($clear);
 }

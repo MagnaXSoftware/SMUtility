@@ -1,7 +1,7 @@
 <?php
 
-class EncodeAddIn_HTML {
-	function encode($clearText) {
+class Algo_HTML implements Enc_Encodable {
+	public function encode($clearText) {
 		return htmlentities(htmlentities($clearText));
 	}
 }

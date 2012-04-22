@@ -94,10 +94,21 @@ class SMU_Encode extends SMU_Plugin {
         $file = ROOT . 'plugins' . DS . 'encode' . DS . 'algos' . DS . $type . '.php';
         if (file_exists($file)) {
             require_once $file;
-            $class = "EncodeAddIn_" . strtoupper($type);
+            $class = "Algo_" . strtoupper($type);
             $obj = new $class;
             return $obj->encode($clear);
         }
         throw new Exception('Unknown encoding algorithm');
     }
+}
+
+/**
+ * Interface that encodable algorithms must implement.
+ */
+interface Enc_Encodable {
+
+    /**
+     * Does the encoding.
+     */
+    public function encode($clear);
 }

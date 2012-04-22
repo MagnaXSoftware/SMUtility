@@ -1,7 +1,7 @@
 <?php
 
-class EncodeAddIn_BASE64 {
-	function encode($clearText) {
+class Algo_BASE64 implements Enc_Encodable {
+	public function encode($clearText) {
 		return base64_encode($clearText);
 	}
 }

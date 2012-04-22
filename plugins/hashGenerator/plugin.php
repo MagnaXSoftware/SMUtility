@@ -61,7 +61,7 @@ class SMU_HashGenerator extends SMU_Plugin {
                 'value' => $this->_generateHash($form['value'], $form['type'])
             ),
             'options' => array(
-                'Hashing algorythm' => strtoupper($form['type']),
+                'Hashing algorithm' => strtoupper($form['type']),
                 'clear text' => $form['value']
             )
         );
@@ -97,10 +97,21 @@ class SMU_HashGenerator extends SMU_Plugin {
         $file = ROOT . 'plugins' . DS . 'hashGenerator' . DS . 'algos' . DS . $type . '.php';
         if (file_exists($file)) {
             require_once $file;
-            $class = "HashAddIn_" . strtoupper($type);
+            $class = "Algo_" . strtoupper($type);
             $obj = new $class;
             return $obj->doHash($clear);
         }
         throw new Exception('Unknown hashing algorithm');
     }
+}
+
+/**
+ * Interface that hashable algorithms must implement.
+ */
+interface HashGen_Hashable {
+
+    /**
+     * Does the hashing.
+     */
+    public function doHash($clear);
 }
