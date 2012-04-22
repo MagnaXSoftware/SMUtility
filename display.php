@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Various display-related functions
  *
@@ -25,7 +24,7 @@ class HTML {
      * @param array $context Metadata on the current plugin, if relevant
      * @return boolean
      */
-    public static function display($title, $content, &$context = null) {
+    public static function display($title, $content, array &$context = null) {
         $html = self::_header($title);
         $html .= $content;
         $html .= self::_footer($context);
@@ -92,13 +91,14 @@ class HTML {
     /**
      * Generates a configuration form for $plugin using specified options.
      *
-     * @param array $form
-     * @param string $plugin
+     * @param SMU_Configurable $plugin Plugin object
+     * @param string $name Plugin name
      * @return string
      * @throws Exception
      */
-    public static function generateForm($form, $plugin) {
-        $html = "<form id=\"form_{$plugin}\" action=\"?do&amp;script={$plugin}\" method=\"post\" class=\"prefix_2 grid_8 suffix_2 alpha omega block\"><fieldset id=\"fieldset_{$plugin}\"><legend>Configuration options</legend>";
+    public static function generateForm(SMU_Configurable $plugin, $name) {
+        $form = $plugin->form();
+        $html = "<form id=\"form_{$name}\" action=\"?do&amp;script={$name}\" method=\"post\" class=\"prefix_2 grid_8 suffix_2 alpha omega block\"><fieldset id=\"fieldset_{$name}\"><legend>Configuration options</legend>";
         foreach ($form as $field) {
             if (!isset($field['label'])) {
                 throw new Exception('Missing required field', 0);
@@ -109,8 +109,8 @@ class HTML {
                     if (!isset($field['name'])) {
                         throw new Exception('Missing required field', 1);
                     }
-                    $html .= "<p><label for=\"{$plugin}_{$field['name']}\">{$field['label']}: </label>";
-                    $html .= '<input type="text" id="' . "{$plugin}_{$field['name']}" . '" name="' . "{$plugin}_{$field['name']}" . '" ';
+                    $html .= "<p><label for=\"{$name}_{$field['name']}\">{$field['label']}: </label>";
+                    $html .= '<input type="text" id="' . "{$name}_{$field['name']}" . '" name="' . "{$name}_{$field['name']}" . '" ';
                     $html .= (isset($field['disabled']) && $field['disabled']) ? 'disabled="disabled" ' : "";
                     $html .= (isset($field['maxlength'])) ? 'maxlength="' . $field['maxlength'] . '" ' : "";
                     $html .= (isset($field['readonly']) && $field['readonly']) ? 'readonly="readonly" ' : "";
@@ -123,8 +123,8 @@ class HTML {
                     if (!isset($field['name'])) {
                         throw new Exception('Missing required field', 1);
                     }
-                    $html .= "<p><label for=\"{$plugin}_{$field['name']}\">{$field['label']}: </label>";
-                    $html .= '<input type="number" id="' . "{$plugin}_{$field['name']}" . '" name="' . "{$plugin}_{$field['name']}" . '" ';
+                    $html .= "<p><label for=\"{$name}_{$field['name']}\">{$field['label']}: </label>";
+                    $html .= '<input type="number" id="' . "{$name}_{$field['name']}" . '" name="' . "{$name}_{$field['name']}" . '" ';
                     $html .= (isset($field['disabled']) && $field['disabled']) ? 'disabled="disabled" ' : "";
                     $html .= (isset($field['maxlength'])) ? 'maxlength="' . $field['maxlength'] . '" ' : "";
                     $html .= (isset($field['readonly']) && $field['readonly']) ? 'readonly="readonly" ' : "";
@@ -136,14 +136,14 @@ class HTML {
                     if (!isset($field['name']) || !isset($field['value'])) {
                         throw new Exception('Missing required field', 2);
                     }
-                    $html .= '<input type="hidden" id="' . "{$plugin}_{$field['name']}" . '" name="' . "{$plugin}_{$field['name']}" . '" value="' . $field['value'] . '" />';
+                    $html .= '<input type="hidden" id="' . "{$name}_{$field['name']}" . '" name="' . "{$name}_{$field['name']}" . '" value="' . $field['value'] . '" />';
                     break;
                 case 'text':
                     if (!isset($field['name'])) {
                         throw new Exception('Missing required field', 3);
                     }
-                    $html .= "<p><label for=\"{$plugin}_{$field['name']}\">{$field['label']}: </label>";
-                    $html .= '<textarea name="' . "{$plugin}_{$field['name']}" . '"';
+                    $html .= "<p><label for=\"{$name}_{$field['name']}\">{$field['label']}: </label>";
+                    $html .= '<textarea name="' . "{$name}_{$field['name']}" . '"';
                     $html .= (isset($field['cols'])) ? ' cols="' . $field['cols'] . '"' : "";
                     $html .= (isset($field['rows'])) ? ' rows="' . $field['rows'] . '"' : "";
                     $html .= (isset($field['disabled']) && $field['disabled']) ? ' disabled="disabled"' : "";
@@ -161,10 +161,10 @@ class HTML {
                         if (!isset($item['label']) || !isset($item['value'])) {
                             throw new Exception('Missing required field', 5);
                         }
-                        $html .= '<br /><input type="radio" name="' . "{$plugin}_{$field['name']}" . '" id="' . "{$plugin}_{$field['name']}[{$i}]" . '" value="' . $item['value'] . '" ';
+                        $html .= '<br /><input type="radio" name="' . "{$name}_{$field['name']}" . '" id="' . "{$name}_{$field['name']}[{$i}]" . '" value="' . $item['value'] . '" ';
                         $html .= (isset($item['checked']) && $item['checked']) ? 'checked="checked" ' : "";
                         $html .= (isset($item['disabled']) && $item['disabled']) ? 'disabled="disabled" ' : "";
-                        $html .= '/><label class="radio" for="' . "{$plugin}_{$field['name']}[{$i}]" . '">' . $item['label'] . '</label>';
+                        $html .= '/><label class="radio" for="' . "{$name}_{$field['name']}[{$i}]" . '">' . $item['label'] . '</label>';
                         $i++;
                     }
                     $html .= "</p>";
@@ -174,8 +174,8 @@ class HTML {
                     if (!isset($field['name']) || !isset($field['value'])) {
                         throw new Exception('Missing required field', 6);
                     }
-                    $html .= "<p><label for=\"{$plugin}_{$field['name']}\">{$field['label']}: </label>";
-                    $html .= '<select id="' . "{$plugin}_{$field['name']}" . '" name="' . "{$plugin}_{$field['name']}" . '"';
+                    $html .= "<p><label for=\"{$name}_{$field['name']}\">{$field['label']}: </label>";
+                    $html .= '<select id="' . "{$name}_{$field['name']}" . '" name="' . "{$name}_{$field['name']}" . '"';
                     $html .= (isset($field['checked']) && $field['checked']) ? ' checked="checked"' : "";
                     $html .= (isset($field['disabled']) && $field['disabled']) ? ' disabled="disabled"' : "";
                     $html .= (isset($field['size'])) ? ' size="' . $field['size'] . '"' : "";
@@ -203,10 +203,10 @@ class HTML {
                         if (!isset($item['label']) || !isset($item['value'])) {
                             throw new Exception('Missing required field', 9);
                         }
-                        $html .= '<br /><input type="checkbox" name="' . "{$plugin}_{$field['name']}" . '" id="' . "{$plugin}_{$field['name']}[{$i}]" . '" value="' . $item['value'] . '" ';
+                        $html .= '<br /><input type="checkbox" name="' . "{$name}_{$field['name']}" . '" id="' . "{$name}_{$field['name']}[{$i}]" . '" value="' . $item['value'] . '" ';
                         $html .= (isset($item['checked']) && $item['checked']) ? 'checked="checked" ' : "";
                         $html .= (isset($item['disabled']) && $item['disabled']) ? 'disabled="disabled" ' : "";
-                        $html .= '/><label class="radio" for="' . "{$plugin}_{$field['name']}[{$i}]" . '">' . $item['label'] . '</label>';
+                        $html .= '/><label class="radio" for="' . "{$name}_{$field['name']}[{$i}]" . '">' . $item['label'] . '</label>';
                         $i++;
                     }
                     $html .= "</p>";
@@ -225,11 +225,13 @@ class HTML {
     /**
      * Generates the display for the results of the plugin
      *
-     * @param array $results
+     * @param SMU_Executable $plugin Plugin object
+     * @param array $pluginValues Configuration values
      * @return string
      * @throws Exception
      */
-    public static function generateResult($results) {
+    public static function generateResult(SMU_Executable $plugin, array &$pluginValues) {
+        $results = $plugin->execute($pluginValues);
         if (isset($results['options']) && !empty($results['options']) && is_array($results['options'])) {
             $html = '<div class="grid_4 mid_main"><div class="box"><h2>Configuration Options</h2><div class="block"><dl>';
             foreach ($results['options'] as $key => $value) {

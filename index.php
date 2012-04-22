@@ -70,13 +70,13 @@ if (isset($_GET['script']) && !empty($_GET['script'])) {
             }
         }
         try {
-            $content = HTML::generateResult($obj->execute($pluginValues));
+            $content = HTML::generateResult($obj, $pluginValues);
         } catch (Exception $e) {
-            display('Error', HTML::grid(HTML::box($e->getMessage())));
+            HTML::display('Error', HTML::grid(HTML::box($e->getMessage())), $meta);
             exit();
         }
     } else {
-        $content = HTML::generateForm($obj->form(), $meta['ID']);
+        $content = HTML::generateForm($obj, $meta['ID']);
     }
     HTML::display($meta['name'], $content, $meta);
     exit();
