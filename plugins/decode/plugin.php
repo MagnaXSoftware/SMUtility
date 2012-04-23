@@ -7,6 +7,7 @@
  * Require plugin interfaces.
  */
 require_once ROOT . 'plugins.php';
+require_once ROOT . 'plugins' . DS . 'common' . DS . 'algos.php';
 
 /**
  * Decodes a string.
@@ -15,6 +16,18 @@ require_once ROOT . 'plugins.php';
  * @subpackage Decode
  */
 class SMU_Decode extends SMU_Plugin {
+    /**
+     * Directory where algorithms are kept
+     * @var string
+     */
+    private $algosDir = '';
+
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->algosDir = ROOT . 'plugins' . DS . 'common' . DS . 'algos';
+    }
 
     /**
      * Returns a multidimentional array used to build the configuration page.
@@ -47,7 +60,7 @@ class SMU_Decode extends SMU_Plugin {
      * @throws Exception
      * @return array
      */
-    public function execute(&$form) {
+    public function execute(array &$form) {
         if ((!isset($form['type']) || empty($form['type'])) || (!isset($form['value']) || empty($form['value']))) {
             throw new Exception('No configuration option was sent to the plugin.');
         }
@@ -71,12 +84,18 @@ class SMU_Decode extends SMU_Plugin {
      */
     private function _listDecs() {
         $return = array();
-        foreach (scandir(ROOT . 'plugins' . DS . 'decode' . DS . 'algos') as $item) {
+        foreach (scandir($this->algosDir) as $item) {
             if (preg_match('/(\w+)\.php/', $item, $matches)) {
-                $return[] = array(
-                    'label' => strtoupper($matches[1]),
-                    'value' => $matches[1]
-                );
+                include_once $this->algosDir . DS . $item;
+                $class = "Algo_" . strtoupper($matches[1]);
+                $obj = new $class;
+                if ($obj instanceof Enc_Decodable) {
+                    $return[] = array(
+                        'label' => strtoupper($matches[1]),
+                        'value' => $matches[1]
+                    );
+                }
+                unset($obj);
             }
         }
         return $return;
@@ -100,15 +119,4 @@ class SMU_Decode extends SMU_Plugin {
         }
         throw new Exception('Unknown decoding algorithm');
     }
-}
-
-/**
- * Interface that decodable algorithms must implement.
- */
-interface Enc_Decodable {
-
-    /**
-     * Does the decoding.
-     */
-    public function decode($clear);
 }

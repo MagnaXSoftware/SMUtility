@@ -7,6 +7,7 @@
  * Require plugin interfaces.
  */
 require_once ROOT . 'plugins.php';
+require_once ROOT . 'plugins' . DS . 'common' . DS . 'algos.php';
 
 /**
  * Encodes a string.
@@ -15,6 +16,18 @@ require_once ROOT . 'plugins.php';
  * @subpackage Encode
  */
 class SMU_Encode extends SMU_Plugin {
+    /**
+     * Directory where algorithms are kept
+     * @var string
+     */
+    private $pluginDir = '';
+
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->pluginDir = ROOT . 'plugins' . DS . 'common' . DS . 'algos';
+    }
 
     /**
      * Returns a multidimentional array used to build the configuration page.
@@ -71,12 +84,18 @@ class SMU_Encode extends SMU_Plugin {
      */
     private function _listEncs() {
         $return = array();
-        foreach (scandir(ROOT . 'plugins' . DS . 'encode' . DS . 'algos') as $item) {
+        foreach (scandir($this->pluginDir) as $item) {
             if (preg_match('/(\w+)\.php/', $item, $matches)) {
-                $return[] = array(
-                    'label' => strtoupper($matches[1]),
-                    'value' => $matches[1]
-                );
+                include_once $this->pluginDir . DS . $item;
+                $class = "Algo_" . strtoupper($matches[1]);
+                $obj = new $class;
+                if ($obj instanceof Enc_Encodable) {
+                    $return[] = array(
+                        'label' => strtoupper($matches[1]),
+                        'value' => $matches[1]
+                    );
+                }
+                unset($obj);
             }
         }
         return $return;
@@ -91,7 +110,7 @@ class SMU_Encode extends SMU_Plugin {
      * @throws Exception
      */
     private function _encode($clear, $type) {
-        $file = ROOT . 'plugins' . DS . 'encode' . DS . 'algos' . DS . $type . '.php';
+        $file = ROOT . 'plugins' . DS . 'common' . DS . 'algos' . DS . $type . '.php';
         if (file_exists($file)) {
             require_once $file;
             $class = "Algo_" . strtoupper($type);
@@ -100,15 +119,4 @@ class SMU_Encode extends SMU_Plugin {
         }
         throw new Exception('Unknown encoding algorithm');
     }
-}
-
-/**
- * Interface that encodable algorithms must implement.
- */
-interface Enc_Encodable {
-
-    /**
-     * Does the encoding.
-     */
-    public function encode($clear);
 }
