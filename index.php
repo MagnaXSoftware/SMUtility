@@ -22,7 +22,7 @@ require_once ROOT . 'functions.php';
 $systemMeta = array(
     'ID' => 'core',
     'name' => 'SMUtility',
-    'version' => 'dev',
+    'version' => '1.0',
     'author' => 'AfroSoft'
 );
 
