@@ -1,5 +1,14 @@
 <?php
+/**
+ * Base64 Algorithm
+ */
 
+/**
+ * Base64 Algorithm
+ *
+ * @package Plugin
+ * @subpackage Common\Algorithm
+ */
 class Algo_BASE64 implements Enc_Decodable, Enc_Encodable {
 
     public function encode($clearText) {

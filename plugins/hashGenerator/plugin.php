@@ -7,6 +7,7 @@
  * Require plugin interfaces.
  */
 require_once ROOT . 'plugins.php';
+require_once ROOT . 'plugins' . DS . 'common' . DS . 'algos.php';
 
 /**
  * Generates a hash from a clear text string.
@@ -15,6 +16,18 @@ require_once ROOT . 'plugins.php';
  * @subpackage HashGenerator
  */
 class SMU_HashGenerator extends SMU_Plugin {
+    /**
+     * Directory where algorithms are kept
+     * @var string
+     */
+    private $algosDir = '';
+
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->algosDir = ROOT . 'plugins' . DS . 'common' . DS . 'algos';
+    }
 
     /**
      * Returns a multidimentional array used to build the configuration page.
@@ -48,20 +61,18 @@ class SMU_HashGenerator extends SMU_Plugin {
      * @return array
      */
     public function execute(array &$form) {
-        if (!isset($form['type']) || empty($form['type'])) {
+        if ((!isset($form['type']) || empty($form['type'])) || (!isset($form['value']) || empty($form['value']))) {
             throw new Exception('No configuration option was sent to the plugin.');
         }
-        if (!isset($form['value'])) {
-            $form['value'] = '';
-        }
+        $algo = $this->_cleanPath($form['type']);
         return array(
             array(
                 'label' => 'Hashed value',
                 'type' => 'string',
-                'value' => $this->_generateHash($form['value'], $form['type'])
+                'value' => $this->_generateHash($form['value'], $algo)
             ),
             'options' => array(
-                'Hashing algorithm' => strtoupper($form['type']),
+                'Hashing algorithm' => strtoupper($algo),
                 'clear text' => $form['value']
             )
         );
@@ -74,12 +85,18 @@ class SMU_HashGenerator extends SMU_Plugin {
      */
     private function _listHashes() {
         $return = array();
-        foreach (scandir(ROOT . 'plugins' . DS . 'hashGenerator' . DS . 'algos') as $item) {
+        foreach (scandir($this->algosDir) as $item) {
             if (preg_match('/(\w+)\.php/', $item, $matches)) {
-                $return[] = array(
-                    'label' => strtoupper($matches[1]),
-                    'value' => $matches[1]
-                );
+                include_once $this->algosDir . DS . $item;
+                $class = "Algo_" . strtoupper($matches[1]);
+                $obj = new $class;
+                if ($obj instanceof Hash_Hashable) {
+                    $return[] = array(
+                        'label' => strtoupper($matches[1]),
+                        'value' => $matches[1]
+                    );
+                }
+                unset($obj);
             }
         }
         return $return;
@@ -94,24 +111,16 @@ class SMU_HashGenerator extends SMU_Plugin {
      * @throws Exception
      */
     private function _generateHash($clear, $type) {
-        $file = ROOT . 'plugins' . DS . 'hashGenerator' . DS . 'algos' . DS . $type . '.php';
+        $file = $this->algosDir . DS . $type . '.php';
         if (file_exists($file)) {
             require_once $file;
             $class = "Algo_" . strtoupper($type);
             $obj = new $class;
-            return $obj->doHash($clear);
+            if (!($obj instanceof Hash_Hashable)) {
+                throw new Exception('Algorithm is not hashable');
+            }
+            return $obj->hash($clear);
         }
         throw new Exception('Unknown hashing algorithm');
     }
-}
-
-/**
- * Interface that hashable algorithms must implement.
- */
-interface HashGen_Hashable {
-
-    /**
-     * Does the hashing.
-     */
-    public function doHash($clear);
 }

@@ -48,4 +48,13 @@ interface SMU_Executable {
  */
 abstract class SMU_Plugin implements SMU_Configurable, SMU_Executable {
 
+    /**
+     * Cleans path (only keeps alphanumerics and '_', '.', '-':).
+     *
+     * @param string $input dirty input path
+     * @return string
+     */
+    protected function _cleanPath($input) {
+        return preg_replace("/[^a-zA-Z0-9_\.-]/", "", $input);
+    }
 }

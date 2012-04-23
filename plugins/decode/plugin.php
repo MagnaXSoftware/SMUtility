@@ -64,14 +64,15 @@ class SMU_Decode extends SMU_Plugin {
         if ((!isset($form['type']) || empty($form['type'])) || (!isset($form['value']) || empty($form['value']))) {
             throw new Exception('No configuration option was sent to the plugin.');
         }
+        $algo = $this->_cleanPath($form['type']);
         return array(
             array(
                 'label' => 'Decoded value',
                 'type' => 'string',
-                'value' => $this->_decode($form['value'], $form['type'])
+                'value' => $this->_decode($form['value'], $algo)
             ),
             'options' => array(
-                'Encoding algorythm' => strtoupper($form['type']),
+                'Encoding algorythm' => strtoupper($algo),
                 'Encoded value' => $form['value']
             )
         );
@@ -110,11 +111,14 @@ class SMU_Decode extends SMU_Plugin {
      * @throws Exception
      */
     private function _decode($clear, $type) {
-        $file = ROOT . 'plugins' . DS . 'decode' . DS . 'algos' . DS . $type . '.php';
+        $file = $this->algosDir . DS . $type . '.php';
         if (file_exists($file)) {
             require_once $file;
             $class = "Algo_" . strtoupper($type);
             $obj = new $class;
+            if (!($obj instanceof Enc_Decodable)) {
+                throw new Exception('Algorithm is not decodable');
+            }
             return $obj->decode($clear);
         }
         throw new Exception('Unknown decoding algorithm');

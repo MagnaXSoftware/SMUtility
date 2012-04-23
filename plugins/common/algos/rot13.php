@@ -1,5 +1,14 @@
 <?php
+/**
+ * ROT13 Algorithm
+ */
 
+/**
+ * ROT13 Algorithm
+ *
+ * @package Plugin
+ * @subpackage Common\Algorithm
+ */
 class Algo_ROT13 implements Enc_Decodable, Enc_Encodable {
 
     public function encode($clearText) {

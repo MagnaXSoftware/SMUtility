@@ -20,13 +20,13 @@ class SMU_Encode extends SMU_Plugin {
      * Directory where algorithms are kept
      * @var string
      */
-    private $pluginDir = '';
+    private $algosDir = '';
 
     /**
      * Constructor
      */
     public function __construct() {
-        $this->pluginDir = ROOT . 'plugins' . DS . 'common' . DS . 'algos';
+        $this->algosDir = ROOT . 'plugins' . DS . 'common' . DS . 'algos';
     }
 
     /**
@@ -64,14 +64,15 @@ class SMU_Encode extends SMU_Plugin {
         if ((!isset($form['type']) || empty($form['type'])) || (!isset($form['value']) || empty($form['value']))) {
             throw new Exception('No configuration option was sent to the plugin.');
         }
+        $algo = $this->_cleanPath($form['type']);
         return array(
             array(
                 'label' => 'Encoded value',
                 'type' => 'string',
-                'value' => HTML::wrap('code', $this->_encode($form['value'], $form['type']))
+                'value' => HTML::wrap('code', $this->_encode($form['value'], $algo))
             ),
             'options' => array(
-                'Encoding algorythm' => strtoupper($form['type']),
+                'Encoding algorythm' => strtoupper($algo),
                 'clear text' => $form['value']
             )
         );
@@ -84,9 +85,9 @@ class SMU_Encode extends SMU_Plugin {
      */
     private function _listEncs() {
         $return = array();
-        foreach (scandir($this->pluginDir) as $item) {
+        foreach (scandir($this->algosDir) as $item) {
             if (preg_match('/(\w+)\.php/', $item, $matches)) {
-                include_once $this->pluginDir . DS . $item;
+                include_once $this->algosDir . DS . $item;
                 $class = "Algo_" . strtoupper($matches[1]);
                 $obj = new $class;
                 if ($obj instanceof Enc_Encodable) {
@@ -110,11 +111,14 @@ class SMU_Encode extends SMU_Plugin {
      * @throws Exception
      */
     private function _encode($clear, $type) {
-        $file = ROOT . 'plugins' . DS . 'common' . DS . 'algos' . DS . $type . '.php';
+        $file = $this->algosDir . DS . $type . '.php';
         if (file_exists($file)) {
             require_once $file;
             $class = "Algo_" . strtoupper($type);
             $obj = new $class;
+            if (!($obj instanceof Enc_Encodable)) {
+                throw new Exception('Algorithm is not encodable');
+            }
             return $obj->encode($clear);
         }
         throw new Exception('Unknown encoding algorithm');
