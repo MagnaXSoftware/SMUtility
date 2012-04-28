@@ -6,13 +6,50 @@
  * @subpackage Display
  */
 
+abstract class DisplayEngine {
+
+    /**
+     * Generates and displays the content of a page
+     * 
+     * @param string $title Title of the page
+     * @param string $content The main content of the page
+     * @param array $context Metadata on the current plugin, if relevant
+     * @return boolean
+     */
+    public static function display($title, $content, array &$context = null) {
+        throw new Exception('The display function must be implemented in all display engines');
+    }
+    
+    /**
+     * Generates a configuration form for $plugin using specified options.
+     *
+     * @param SMU_Configurable $plugin Plugin object
+     * @param string $name Plugin name
+     * @return array
+     */
+    public static function generateForm(SMU_Configurable $plugin, $name) {
+        return $plugin->form();
+    }
+    
+    /**
+     * Generates the display for the results of the plugin
+     *
+     * @param SMU_Executable $plugin Plugin object
+     * @param array $pluginValues Configuration values
+     * @return array
+     */
+    public static function generateResult(SMU_Executable $plugin, array &$pluginValues) {
+        return $plugin->execute($pluginValues);
+    }
+}
+
 /**
  * Handles the generation and display of HTML markup.
  *
  * @package Core
  * @subpackage Display
  */
-class HTML {
+class HTML extends DisplayEngine {
 
     /**
      * Generates and display a complete HTML page.
