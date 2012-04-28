@@ -69,7 +69,7 @@ class SMU_Encode extends SMU_Plugin {
             array(
                 'label' => 'Encoded value',
                 'type' => 'string',
-                'value' => HTML::wrap('code', $this->_encode($form['value'], $algo))
+                'value' => $this->_encode($form['value'], $algo)
             ),
             'options' => array(
                 'Encoding algorythm' => strtoupper($algo),
