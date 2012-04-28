@@ -3,28 +3,24 @@
  * SMUtility
  *
  * @package Core
+ * @subpackage JSON
  */
 
 /**
  * Shorthand for DIRECTORY_SEPARATOR
  * @package Core
+ * @subpackage JSON
  */
 define('DS', DIRECTORY_SEPARATOR);
 /**
  * Location of the root of the script
  * @package Core
+ * @subpackage JSON
  */
 define('ROOT', '.' . DS);
 
 require_once ROOT . 'display.php';
 require_once ROOT . 'functions.php';
-
-$systemMeta = array(
-    'ID' => 'core',
-    'name' => 'SMUtility',
-    'version' => '1.1',
-    'author' => 'AfroSoft'
-);
 
 /* first check for info command. If found, load meta from script */
 if (isset($_GET['info']) && isset($_GET['script']) && !empty($_GET['script'])) {
@@ -35,21 +31,13 @@ if (isset($_GET['info']) && isset($_GET['script']) && !empty($_GET['script'])) {
         try {
             $meta = Load::meta($_GET['script']);
         } catch (Exception $e) {
-            HTML::display('Error', HTML::grid(HTML::box($e->getMessage())));
+            JSON::display('Error', $e->getMessage());
             exit();
         }
         $context = true;
     }
     ksort($meta);
-    $content = "";
-    foreach ($meta as $key => $value) {
-        $content .= "<dt>{$key}</dt><dd>{$value}</dd>";
-    }
-    if ($context == true) {
-        HTML::display($meta['name'] . ' Info', HTML::grid(HTML::box(HTML::wrap('dl', $content))), $meta);
-    } else {
-        HTML::display($meta['name'] . ' Info', HTML::grid(HTML::box(HTML::wrap('dl', $content))));
-    }
+    JSON::display($meta['name'] . ' Info', $meta);
     exit();
 }
 
@@ -59,7 +47,7 @@ if (isset($_GET['script']) && !empty($_GET['script'])) {
         $obj = Load::plugin($_GET['script']);
         $meta = Load::meta($_GET['script']);
     } catch (Exception $e) {
-        HTML::display('Error', HTML::grid(HTML::box($e->getMessage())));
+        JSON::display('Error', $e->getMessage());
         exit();
     }
     if (isset($_GET['do'])) {
@@ -70,28 +58,28 @@ if (isset($_GET['script']) && !empty($_GET['script'])) {
             }
         }
         try {
-            $content = HTML::generateResult($obj, $pluginValues);
+            $content = JSON::generateResult($obj, $pluginValues);
         } catch (Exception $e) {
-            HTML::display('Error', HTML::grid(HTML::box($e->getMessage())), $meta);
+            JSON::display('Error', $e->getMessage());
             exit();
         }
     } else {
-        $content = HTML::generateForm($obj, $meta['ID']);
+        $content = JSON::generateForm($obj, $meta['ID']);
     }
-    HTML::display($meta['name'], $content, $meta);
+    JSON::display($meta['name'], $content);
     exit();
 }
 
-/* nothing matched so display index */
-$content = "";
+/* nothing matched so display list of plugins */
+$content = array();
 foreach (scandir(ROOT . 'plugins') as $item) {
     try {
         $meta = Load::meta($item);
-        $content .= '<li><a href="?script=' . $meta['ID'] . '">' . $meta['name'] . '</a> - <a href="?info&amp;script=' . $meta['ID'] . '">Info</a></li>';
+        $content[] = $meta;
     } catch (Exception $e) {
         // An exception signifies that the directory is not a plugin.
         // We skip that directory
     }
 }
 
-HTML::display('Script List', HTML::grid(HTML::box(HTML::wrap('ul', $content))));
+JSON::display('Script List', $content);
