@@ -353,7 +353,7 @@ class HTML extends DisplayEngine {
 }
 
 /**
- * Handles the generation and display of JSON Data.
+ * Handles the generation and display of JSON data.
  *
  * @package Core
  * @subpackage Display
