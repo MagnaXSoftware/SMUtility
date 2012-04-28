@@ -65,8 +65,8 @@ if (isset($_GET['script']) && !empty($_GET['script'])) {
     if (isset($_GET['do'])) {
         $pluginValues = array();
         foreach ($_POST as $key => $value) {
-            if (strpos($key, $_GET['script']) !== false) {
-                $pluginValues[str_replace($_GET['script'] . '_', "", $key)] = $value;
+            if (strpos($key, $meta['ID']) !== false) {
+                $pluginValues[str_replace($meta['ID'] . '_', "", $key)] = $value;
             }
         }
         try {
