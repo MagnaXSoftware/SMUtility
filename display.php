@@ -6,6 +6,12 @@
  * @subpackage Display
  */
 
+/**
+ * Abstract class for all display engines.
+ *
+ * @package Core
+ * @subpackage Display
+ */
 abstract class DisplayEngine {
 
     /**
@@ -343,5 +349,29 @@ class HTML extends DisplayEngine {
 </div>
 </body>
 </html>';
+    }
+}
+
+/**
+ * Handles the generation and display of JSON Data.
+ *
+ * @package Core
+ * @subpackage Display
+ */
+class JSON extends DisplayEngine {
+    /**
+     * Generates and display a complete HTML page.
+     *
+     * @uses self::_header()
+     * @uses self::_footer()
+     * @param string $title Title of the page
+     * @param string $content The main content of the page
+     * @param array $context Metadata on the current plugin, if relevant
+     * @return boolean
+     */
+    public static function display($title, $content, array &$context = null) {
+        header('Content-type: application/json');
+        echo json_encode(array('title' => $title, 'data' => $content));
+        return true;
     }
 }
