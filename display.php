@@ -72,7 +72,7 @@ class HTML extends DisplayEngine {
         $html .= $content;
         $html .= self::_footer($context);
 
-        header('Content-type: text/html');
+        header('Content-type: text/html; charset=utf-8');
         echo $html;
         return true;
     }
@@ -128,7 +128,7 @@ class HTML extends DisplayEngine {
         if (is_string($options)) {
             $options_line .= " {$options}";
         }
-        return (empty($options_line)) ? "<{$tag}>{$content}</{$tag}>" : "<{$tag} {$options_line}>{$content}</{$tag}>";
+        return (empty($options_line)) ? "<{$tag}>{$content}</{$tag}>" : "<{$tag}{$options_line}>{$content}</{$tag}>";
     }
 
     /**
@@ -179,7 +179,7 @@ class HTML extends DisplayEngine {
                     if (!isset($field['name']) || !isset($field['value'])) {
                         throw new Exception('Missing required field', 2);
                     }
-                    $html .= '<input type="hidden" id="' . "{$name}_{$field['name']}" . '" name="' . "{$name}_{$field['name']}" . '" value="' . $field['value'] . '" />';
+                    $html .= '<input type="hidden" id="' . "{$name}_{$field['name']}" . '" name="' . "{$name}_{$field['name']}" . '" value="' . $field['value'] . '">';
                     break;
                 case 'text':
                     if (!isset($field['name'])) {
@@ -204,7 +204,7 @@ class HTML extends DisplayEngine {
                         if (!isset($item['label']) || !isset($item['value'])) {
                             throw new Exception('Missing required field', 5);
                         }
-                        $html .= '<br /><input type="radio" name="' . "{$name}_{$field['name']}" . '" id="' . "{$name}_{$field['name']}[{$i}]" . '" value="' . $item['value'] . '" ';
+                        $html .= '<br><input type="radio" name="' . "{$name}_{$field['name']}" . '" id="' . "{$name}_{$field['name']}[{$i}]" . '" value="' . $item['value'] . '" ';
                         $html .= (isset($item['checked']) && $item['checked']) ? 'checked="checked" ' : "";
                         $html .= (isset($item['disabled']) && $item['disabled']) ? 'disabled="disabled" ' : "";
                         $html .= '/><label class="radio" for="' . "{$name}_{$field['name']}[{$i}]" . '">' . $item['label'] . '</label>';
@@ -246,7 +246,7 @@ class HTML extends DisplayEngine {
                         if (!isset($item['label']) || !isset($item['value'])) {
                             throw new Exception('Missing required field', 9);
                         }
-                        $html .= '<br /><input type="checkbox" name="' . "{$name}_{$field['name']}" . '" id="' . "{$name}_{$field['name']}[{$i}]" . '" value="' . $item['value'] . '" ';
+                        $html .= '<br><input type="checkbox" name="' . "{$name}_{$field['name']}" . '" id="' . "{$name}_{$field['name']}[{$i}]" . '" value="' . $item['value'] . '" ';
                         $html .= (isset($item['checked']) && $item['checked']) ? 'checked="checked" ' : "";
                         $html .= (isset($item['disabled']) && $item['disabled']) ? 'disabled="disabled" ' : "";
                         $html .= '/><label class="radio" for="' . "{$name}_{$field['name']}[{$i}]" . '">' . $item['label'] . '</label>';
@@ -260,7 +260,7 @@ class HTML extends DisplayEngine {
                     break;
             }
         }
-        $html .= '</fieldset><input type="reset" value="Reset" /><input type="submit" value="Submit" name="submit" id="submit" />';
+        $html .= '</fieldset><input type="reset" value="Reset"><input type="submit" value="Submit" name="submit" id="submit">';
         $html .= "</form>";
         return self::grid(self::box($html));
     }
@@ -310,18 +310,20 @@ class HTML extends DisplayEngine {
      */
     private static function _header($title) {
         $titleHead = (empty($title)) ? 'SMUtility' : $title . ' :: SMUtility';
-        return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        return '<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 <head>
 <title>' . $titleHead . '</title>
-<link rel="stylesheet" type="text/css" href="css/reset.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="css/text.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="css/960.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="css/layout.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="css/nav.css" media="screen" />
-<!--[if IE 6]><link rel="stylesheet" type="text/css" href="css/ie6.css" media="screen" /><![endif]-->
-<!--[if IE 7]><link rel="stylesheet" type="text/css" href="css/ie.css" media="screen" /><![endif]-->
-<link rel="stylesheet" type="text/css" href="css/custom.css" media="screen" />
+<meta charset="UTF-8">
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="css/reset.css" media="screen">
+<link rel="stylesheet" type="text/css" href="css/text.css" media="screen">
+<link rel="stylesheet" type="text/css" href="css/960.css" media="screen">
+<link rel="stylesheet" type="text/css" href="css/layout.css" media="screen">
+<link rel="stylesheet" type="text/css" href="css/nav.css" media="screen">
+<!--[if IE 6]><link rel="stylesheet" type="text/css" href="css/ie6.css" media="screen"><![endif]-->
+<!--[if IE 7]><link rel="stylesheet" type="text/css" href="css/ie.css" media="screen"><![endif]-->
+<link rel="stylesheet" type="text/css" href="css/custom.css" media="screen">
 </head>
 <body>
 <div class="container_12">
@@ -370,7 +372,7 @@ class JSON extends DisplayEngine {
      * @return boolean
      */
     public static function display($title, $content, array &$context = null) {
-        header('Content-type: application/json');
+        header('Content-type: application/json; charset=utf-8');
         echo json_encode(array('title' => $title, 'data' => $content));
         return true;
     }
