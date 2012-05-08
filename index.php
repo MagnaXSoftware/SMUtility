@@ -15,6 +15,12 @@ define('DS', DIRECTORY_SEPARATOR);
  * @package Core
  */
 define('ROOT', '.' . DS);
+/**
+ * Location of the assets directory.
+ * @package Core
+ * @subpackage Display 
+ */
+define('ASSET_DIR', 'assets/');
 
 header('Content-type: text/html; charset=utf-8');
 ?>
@@ -24,14 +30,14 @@ header('Content-type: text/html; charset=utf-8');
 <title>Loading... :: SMUtility</title>
 <meta charset="UTF-8">
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-<link rel="stylesheet" type="text/css" href="css/reset.css" media="screen">
-<link rel="stylesheet" type="text/css" href="css/text.css" media="screen">
-<link rel="stylesheet" type="text/css" href="css/960.css" media="screen">
-<link rel="stylesheet" type="text/css" href="css/layout.css" media="screen">
-<link rel="stylesheet" type="text/css" href="css/nav.css" media="screen">
-<!--[if IE 6]><link rel="stylesheet" type="text/css" href="css/ie6.css" media="screen"><![endif]-->
-<!--[if IE 7]><link rel="stylesheet" type="text/css" href="css/ie.css" media="screen"><![endif]-->
-<link rel="stylesheet" type="text/css" href="css/custom.css" media="screen">
+<link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/reset.css" media="screen">
+<link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/text.css" media="screen">
+<link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/960.css" media="screen">
+<link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/layout.css" media="screen">
+<link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/nav.css" media="screen">
+<!--[if IE 6]><link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/ie6.css" media="screen"><![endif]-->
+<!--[if IE 7]><link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/ie.css" media="screen"><![endif]-->
+<link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/custom.css" media="screen">
 </head>
 <body>
 <div class="container_12">
@@ -42,6 +48,12 @@ header('Content-type: text/html; charset=utf-8');
 <div class="grid_12" id="main">
         <div class="box" id="content">
         </div>
+    <noscript>
+        <div class="box">
+            <p>Use of this interface requires javascript to be enabled.</p>
+            <p>If you wish not to enable javascript, please use the <a href="html.php">html interface</a>.</p>
+        </div>
+    </noscript>
 </div>
 <div class="clear"></div>
 <div id="footer_link" class="grid_12">

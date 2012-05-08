@@ -15,6 +15,12 @@ define('DS', DIRECTORY_SEPARATOR);
  * @package Core
  */
 define('ROOT', '.' . DS);
+/**
+ * Location of the assets directory.
+ * @package Core
+ * @subpackage Display 
+ */
+define('ASSET_DIR', 'assets/');
 
 require_once ROOT . 'display.php';
 require_once ROOT . 'functions.php';

@@ -316,14 +316,14 @@ class HTML extends DisplayEngine {
 <title>' . $titleHead . '</title>
 <meta charset="UTF-8">
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-<link rel="stylesheet" type="text/css" href="css/reset.css" media="screen">
-<link rel="stylesheet" type="text/css" href="css/text.css" media="screen">
-<link rel="stylesheet" type="text/css" href="css/960.css" media="screen">
-<link rel="stylesheet" type="text/css" href="css/layout.css" media="screen">
-<link rel="stylesheet" type="text/css" href="css/nav.css" media="screen">
-<!--[if IE 6]><link rel="stylesheet" type="text/css" href="css/ie6.css" media="screen"><![endif]-->
-<!--[if IE 7]><link rel="stylesheet" type="text/css" href="css/ie.css" media="screen"><![endif]-->
-<link rel="stylesheet" type="text/css" href="css/custom.css" media="screen">
+<link rel="stylesheet" type="text/css" href="' . ASSET_DIR . 'css/reset.css" media="screen">
+<link rel="stylesheet" type="text/css" href="' . ASSET_DIR . 'css/text.css" media="screen">
+<link rel="stylesheet" type="text/css" href="' . ASSET_DIR . 'css/960.css" media="screen">
+<link rel="stylesheet" type="text/css" href="' . ASSET_DIR . 'css/layout.css" media="screen">
+<link rel="stylesheet" type="text/css" href="' . ASSET_DIR . 'css/nav.css" media="screen">
+<!--[if IE 6]><link rel="stylesheet" type="text/css" href="' . ASSET_DIR . 'css/ie6.css" media="screen"><![endif]-->
+<!--[if IE 7]><link rel="stylesheet" type="text/css" href="' . ASSET_DIR . 'css/ie.css" media="screen"><![endif]-->
+<link rel="stylesheet" type="text/css" href="' . ASSET_DIR . 'css/custom.css" media="screen">
 </head>
 <body>
 <div class="container_12">
