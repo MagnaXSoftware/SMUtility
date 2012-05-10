@@ -38,7 +38,9 @@ header('Content-type: text/html; charset=utf-8');
 <!--[if IE 6]><link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/ie6.css" media="screen"><![endif]-->
 <!--[if IE 7]><link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/ie.css" media="screen"><![endif]-->
 <link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/custom.css" media="screen">
-</head>
+<script src="<?php echo ASSET_DIR?>js/jquery-1.7.2.min.js"></script>
+<script src="<?php echo ASSET_DIR?>js/custom.js"></script>
+    </head>
 <body>
 <div class="container_12">
 <div class="grid_12">
@@ -46,8 +48,10 @@ header('Content-type: text/html; charset=utf-8');
 </div>
 <div class="clear"></div>
 <div class="grid_12" id="main">
-        <div class="box" id="content">
-        </div>
+    <div class="box center" id="loader">
+        <img src="<?php echo ASSET_DIR ?>img/loading.gif" height="32px" width="32px">
+    </div>
+    <div class="box" id="content" style="display: none;"></div>
     <noscript>
         <div class="box">
             <p>Use of this interface requires javascript to be enabled.</p>
@@ -58,8 +62,8 @@ header('Content-type: text/html; charset=utf-8');
 <div class="clear"></div>
 <div id="footer_link" class="grid_12">
     <ul class="nav">
-        <li><a href="?">Script List (home)</a></li>
-        <li><a href="?info&amp;script=core">System Info</a></li>
+        <li><a id="home" href="html.php?">Script List (home)</a></li>
+        <li><a id="sys_info" href="html.php?info&amp;script=core">System Info</a></li>
     </ul>
 </div>
 <div class="clear"></div>

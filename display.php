@@ -372,8 +372,9 @@ class JSON extends DisplayEngine {
      * @return boolean
      */
     public static function display($title, $content, array &$context = null) {
+        header('HTTP/1.1 200 OK');
         header('Content-type: application/json; charset=utf-8');
-        echo json_encode(array('title' => $title, 'data' => $content));
+        echo json_encode($content);
         return true;
     }
 }

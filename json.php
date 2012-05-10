@@ -19,6 +19,36 @@ define('DS', DIRECTORY_SEPARATOR);
  */
 define('ROOT', '.' . DS);
 
+/**
+ * To make sure irrecoverable headers send the right header. It is reverted in 
+ * JSON::display() 
+ */
+header('HTTP/1.1 500 Internal Server Error');
+
+/**
+ * JSON-ifies recoverable errors
+ * 
+ * @param int $code
+ * @param string $string
+ * @param string $file
+ * @param int $line
+ * @param array $context 
+ */
+function my_error_handler($code, $string, $file, $line, $context) {
+    header('HTTP/1.1 500 Internal Server Error');
+    header('Content-type: application/json; charset=utf-8');
+    
+    echo json_encode(array(
+        'code'      => $code,
+        'string'    => $string,
+        'file'      => $file,
+        'line'      => $line,
+    ));
+    exit;
+}
+xdebug_disable();
+set_error_handler('my_error_handler', E_ALL);
+
 require_once ROOT . 'display.php';
 require_once ROOT . 'functions.php';
 
@@ -37,7 +67,7 @@ if (isset($_GET['info']) && isset($_GET['script']) && !empty($_GET['script'])) {
         $context = true;
     }
     ksort($meta);
-    JSON::display($meta['name'] . ' Info', $meta);
+    JSON::display(null, $meta);
     exit();
 }
 
@@ -66,7 +96,7 @@ if (isset($_GET['script']) && !empty($_GET['script'])) {
     } else {
         $content = JSON::generateForm($obj, $meta['ID']);
     }
-    JSON::display($meta['name'], $content);
+    JSON::display(null, array('ID' => $meta['ID'], 'name' => $meta['name'], 'form' => $content));
     exit();
 }
 
@@ -82,4 +112,4 @@ foreach (scandir(ROOT . 'plugins') as $item) {
     }
 }
 
-JSON::display('Script List', $content);
+JSON::display(null, $content);
