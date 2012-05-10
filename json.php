@@ -25,7 +25,7 @@ require_once ROOT . 'functions.php';
 /* first check for info command. If found, load meta from script */
 if (isset($_GET['info']) && isset($_GET['script']) && !empty($_GET['script'])) {
     if ($_GET['script'] == 'core') {
-        $meta = $systemMeta;
+        $meta = Load::systemMeta();
         $context = false;
     } else {
         try {

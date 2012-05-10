@@ -25,17 +25,10 @@ define('ASSET_DIR', 'assets/');
 require_once ROOT . 'display.php';
 require_once ROOT . 'functions.php';
 
-$systemMeta = array(
-    'ID' => 'core',
-    'name' => 'SMUtility',
-    'version' => '1.0',
-    'author' => 'AfroSoft'
-);
-
 /* first check for info command. If found, load meta from script */
 if (isset($_GET['info']) && isset($_GET['script']) && !empty($_GET['script'])) {
     if ($_GET['script'] == 'core') {
-        $meta = $systemMeta;
+        $meta = Load::systemMeta();
         $context = false;
     } else {
         try {
