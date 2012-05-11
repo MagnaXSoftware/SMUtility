@@ -7,6 +7,12 @@
  */
 
 /**
+ * To make sure irrecoverable headers send the right header. It is reverted in 
+ * DisplayEngine::display() 
+ */
+header('HTTP/1.1 500 Internal Server Error');
+
+/**
  * Abstract class for all display engines.
  *
  * @package Core
@@ -72,6 +78,7 @@ class HTML extends DisplayEngine {
         $html .= $content;
         $html .= self::_footer($context);
 
+        header('HTTP/1.1 200 OK');
         header('Content-type: text/html; charset=utf-8');
         echo $html;
         return true;
@@ -241,7 +248,11 @@ class HTML extends DisplayEngine {
                         throw new Exception('Missing required field', 8);
                     }
                     $html .= "<p><span>{$field['label']}: </span>";
-                    $i = 0;
+                  /**
+ * To make sure irrecoverable headers send the right header. It is reverted in 
+ * JSON::display() 
+ */
+header('HTTP/1.1 500 Internal Server Error');  $i = 0;
                     foreach ($field['value'] as $item) {
                         if (!isset($item['label']) || !isset($item['value'])) {
                             throw new Exception('Missing required field', 9);

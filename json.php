@@ -20,12 +20,6 @@ define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', '.' . DS);
 
 /**
- * To make sure irrecoverable headers send the right header. It is reverted in 
- * JSON::display() 
- */
-header('HTTP/1.1 500 Internal Server Error');
-
-/**
  * JSON-ifies recoverable errors
  * 
  * @param int $code
@@ -46,40 +40,41 @@ function my_error_handler($code, $string, $file, $line, $context) {
     ));
     exit;
 }
-xdebug_disable();
+if (function_exists('xdebug_disable')) {
+    xdebug_disable();
+}
 set_error_handler('my_error_handler', E_ALL);
 
 require_once ROOT . 'display.php';
 require_once ROOT . 'functions.php';
 
-/* first check for info command. If found, load meta from script */
-if (isset($_GET['info']) && isset($_GET['script']) && !empty($_GET['script'])) {
-    if ($_GET['script'] == 'core') {
-        $meta = Load::systemMeta();
-        $context = false;
-    } else {
-        try {
-            $meta = Load::meta($_GET['script']);
-        } catch (Exception $e) {
-            JSON::display('Error', $e->getMessage());
-            exit();
-        }
-        $context = true;
-    }
-    ksort($meta);
-    JSON::display(null, $meta);
-    exit();
-}
-
-/* second check if a plugin has been specified, if so, load it and run the current view */
+/* 
+ * First, check for a script variable. 
+ * If defined, load script & metadata associated.
+ */
 if (isset($_GET['script']) && !empty($_GET['script'])) {
     try {
-        $obj = Load::plugin($_GET['script']);
-        $meta = Load::meta($_GET['script']);
+        if ($_GET['script'] == 'core') {
+            $meta = Load::systemMeta();
+        } else {
+            $obj = Load::plugin($_GET['script']);
+            $meta = Load::meta($_GET['script']);
+        }
     } catch (Exception $e) {
         JSON::display('Error', $e->getMessage());
         exit();
     }
+    /*
+     * If info variable is set, display metadata and exit.
+     */
+    if (isset($_GET['info'])) {
+        ksort($meta);
+        JSON::display(null, $meta);
+        exit();
+    }
+    /*
+     * If do variable is set, execute script, display metadata and exit.
+     */
     if (isset($_GET['do'])) {
         $pluginValues = array();
         foreach ($_POST as $key => $value) {
@@ -88,19 +83,23 @@ if (isset($_GET['script']) && !empty($_GET['script'])) {
             }
         }
         try {
-            $content = JSON::generateResult($obj, $pluginValues);
+            JSON::display(null, JSON::generateResult($obj, $pluginValues));
+            exit();
         } catch (Exception $e) {
             JSON::display('Error', $e->getMessage());
             exit();
         }
-    } else {
-        $content = JSON::generateForm($obj, $meta['ID']);
     }
-    JSON::display(null, array('ID' => $meta['ID'], 'name' => $meta['name'], 'form' => $content));
+    /*
+     * Nothing else matched, so display configuration options and exit.
+     */
+    JSON::display(null, JSON::generateForm($obj, $meta['ID']));
     exit();
 }
 
-/* nothing matched so display list of plugins */
+/*
+ * No script variable present, so display the list of plugins.
+ */
 $content = array();
 foreach (scandir(ROOT . 'plugins') as $item) {
     try {
@@ -111,5 +110,4 @@ foreach (scandir(ROOT . 'plugins') as $item) {
         // We skip that directory
     }
 }
-
 JSON::display(null, $content);

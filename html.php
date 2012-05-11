@@ -25,42 +25,40 @@ define('ASSET_DIR', 'assets/');
 require_once ROOT . 'display.php';
 require_once ROOT . 'functions.php';
 
-/* first check for info command. If found, load meta from script */
-if (isset($_GET['info']) && isset($_GET['script']) && !empty($_GET['script'])) {
-    if ($_GET['script'] == 'core') {
-        $meta = Load::systemMeta();
-        $context = false;
-    } else {
-        try {
-            $meta = Load::meta($_GET['script']);
-        } catch (Exception $e) {
-            HTML::display('Error', HTML::grid(HTML::box($e->getMessage())));
-            exit();
-        }
-        $context = true;
-    }
-    ksort($meta);
-    $content = "";
-    foreach ($meta as $key => $value) {
-        $content .= "<dt>{$key}</dt><dd>{$value}</dd>";
-    }
-    if ($context == true) {
-        HTML::display($meta['name'] . ' Info', HTML::grid(HTML::box(HTML::wrap('dl', $content))), $meta);
-    } else {
-        HTML::display($meta['name'] . ' Info', HTML::grid(HTML::box(HTML::wrap('dl', $content))));
-    }
-    exit();
-}
-
-/* second check if a plugin has been specified, if so, load it and run the current view */
+/* 
+ * First, check for a script variable. 
+ * If defined, load script & metadata associated.
+ */
 if (isset($_GET['script']) && !empty($_GET['script'])) {
     try {
-        $obj = Load::plugin($_GET['script']);
-        $meta = Load::meta($_GET['script']);
+        if ($_GET['script'] == 'core') {
+            $meta = Load::systemMeta();
+        } else {
+            $obj = Load::plugin($_GET['script']);
+            $meta = Load::meta($_GET['script']);
+        }
     } catch (Exception $e) {
         HTML::display('Error', HTML::grid(HTML::box($e->getMessage())));
         exit();
     }
+    /*
+     * If info variable is set, display metadata and exit.
+     */
+    if (isset($_GET['info'])) {
+        ksort($meta);
+        $content = "";
+        foreach ($meta as $key => $value) {
+            $content .= "<dt>{$key}</dt><dd>{$value}</dd>";
+        }
+        if ($_GET['script'] != 'core') {
+            HTML::display($meta['name'] . ' Info', HTML::grid(HTML::box(HTML::wrap('dl', $content))), $meta);
+        } else {
+            HTML::display($meta['name'] . ' Info', HTML::grid(HTML::box(HTML::wrap('dl', $content))));
+        }
+    }
+    /*
+     * If do variable is set, execute script, display metadata and exit.
+     */
     if (isset($_GET['do'])) {
         $pluginValues = array();
         foreach ($_POST as $key => $value) {
@@ -69,19 +67,23 @@ if (isset($_GET['script']) && !empty($_GET['script'])) {
             }
         }
         try {
-            $content = HTML::generateResult($obj, $pluginValues);
+            HTML::display($meta['name'], HTML::generateResult($obj, $pluginValues), $meta);
+            exit();
         } catch (Exception $e) {
             HTML::display('Error', HTML::grid(HTML::box($e->getMessage())), $meta);
             exit();
         }
-    } else {
-        $content = HTML::generateForm($obj, $meta['ID']);
     }
-    HTML::display($meta['name'], $content, $meta);
+    /*
+     * Nothing else matched, so display configuration options and exit.
+     */
+    HTML::display($meta['ID'], HTML::generateForm($obj, $meta['ID']), $meta);
     exit();
 }
 
-/* nothing matched so display index */
+/*
+ * No script variable present, so display the list of plugins.
+ */
 $content = "";
 foreach (scandir(ROOT . 'plugins') as $item) {
     try {
@@ -92,5 +94,4 @@ foreach (scandir(ROOT . 'plugins') as $item) {
         // We skip that directory
     }
 }
-
 HTML::display('Script List', HTML::grid(HTML::box(HTML::wrap('ul', $content))));
