@@ -4,9 +4,15 @@ $(document).ready(function() {
     }).attr('href', '#');
     $('a#sys_info').click(function() {
         loadPage(buildInfoPage, {'info':true, 'script':'core'});
+        window.scriptInfo = {'name': 'SMUtility', 'ID': 'core'}
     }).attr('href', '#info&script=core');
     loadPage(buildScriptListPage);
 })
+
+window.scriptInfo = {
+    'name': '',
+    'ID': ''
+}
 
 function loadPage(callback, params) {
     showLoader();
@@ -53,13 +59,13 @@ function buildScriptListPage(json) {
             .append(function() {return $('<a>', {
                     "href": '#script=' + element.ID
                 })
-                .click(function() {loadPage(buildScriptPage, {'script':element.ID})})
+                .click(function() {loadPage(buildScriptPage, {'script':element.ID});window.scriptInfo = {'name': element.name, 'ID': element.ID};})
                 .text(element.name)
             })
             .append(" - ")
             .append(function() {return $('<a>', {
                     "href": '#info&script=' + element.ID
-                }).click(function() {loadPage(buildInfoPage, {'info':true,'script':element.ID})})
+                }).click(function() {loadPage(buildInfoPage, {'info':true,'script':element.ID});window.scriptInfo = {'name': element.name, 'ID': element.ID}})
                 .text("Info")
             })
         ul.append(li)
@@ -101,20 +107,28 @@ function buildInfoPage(json) {
     hideLoader(scriptName + ' Info')
 }
 function buildScriptPage(json) {
-    console.log(json);
-    
     $('div#content').text('');
-    var form = $('div#content').append('<form>', {
-        'id': 'form_' + json.ID,
-        'action': 'html.php?do&amp;script=' + json.ID,
+    var form = $('div#content').append($('<form>', {
+        'id': 'form_' + window.scriptInfo.ID,
+        'action': 'html.php?do&script=' + window.scriptInfo.ID,
         'method': 'post',
         'class': 'prefix_2 grid_8 suffix_2 alpha omega block'
-    }).find('form');
-    var ffs = form.append('<fieldset>', {
-        'id': 'fieldset_' + json.ID
-    }).find('fieldset#fieldset_'+json.ID).append($('<legend>').text('Configuration Options'));
-    $(json.form).each(function(index, element) {
-        ffs.append()
+    })).find('form');
+    var ffs = form.append($('<fieldset>', {
+        'id': 'fieldset_' + window.scriptInfo.ID
+    })).find('fieldset#fieldset_'+window.scriptInfo.ID).append($('<legend>').text('Configuration Options'));
+    $(json).each(function(index, element) {
+        ffs.append(buildHTMLForm(element, window.scriptInfo.ID));
     })
-    hideLoader(json.name + ' Configuration')
+    form.append($('<input>', {
+        'type': 'reset',
+        'value': 'Reset'
+    }))
+    .append($('<input>', {
+        'type': 'submit',
+        'value': 'Submit',
+        'name': 'submit',
+        'id': 'submit'
+    }));
+    hideLoader(window.scriptInfo.name + ' Configuration')
 }

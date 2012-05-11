@@ -153,12 +153,12 @@ class HTML extends DisplayEngine {
             if (!isset($field['label'])) {
                 throw new Exception('Missing required field', 0);
             }
+            if (!isset($field['name'])) {
+                throw new Exception('Missing required field', 1);
+            }
             $field['label'] = ucfirst($field['label']);
             switch ($field['type']) {
                 case 'string':
-                    if (!isset($field['name'])) {
-                        throw new Exception('Missing required field', 1);
-                    }
                     $html .= "<p><label for=\"{$name}_{$field['name']}\">{$field['label']}: </label>";
                     $html .= '<input type="text" id="' . "{$name}_{$field['name']}" . '" name="' . "{$name}_{$field['name']}" . '" ';
                     $html .= (isset($field['disabled']) && $field['disabled']) ? 'disabled="disabled" ' : "";
@@ -170,9 +170,6 @@ class HTML extends DisplayEngine {
                     break;
                 case 'integer':
                 case 'int':
-                    if (!isset($field['name'])) {
-                        throw new Exception('Missing required field', 1);
-                    }
                     $html .= "<p><label for=\"{$name}_{$field['name']}\">{$field['label']}: </label>";
                     $html .= '<input type="number" id="' . "{$name}_{$field['name']}" . '" name="' . "{$name}_{$field['name']}" . '" ';
                     $html .= (isset($field['disabled']) && $field['disabled']) ? 'disabled="disabled" ' : "";
@@ -183,15 +180,12 @@ class HTML extends DisplayEngine {
                     $html .='</p>';
                     break;
                 case 'hidden':
-                    if (!isset($field['name']) || !isset($field['value'])) {
+                    if (!isset($field['value'])) {
                         throw new Exception('Missing required field', 2);
                     }
                     $html .= '<input type="hidden" id="' . "{$name}_{$field['name']}" . '" name="' . "{$name}_{$field['name']}" . '" value="' . $field['value'] . '">';
                     break;
                 case 'text':
-                    if (!isset($field['name'])) {
-                        throw new Exception('Missing required field', 3);
-                    }
                     $html .= "<p><label for=\"{$name}_{$field['name']}\">{$field['label']}: </label>";
                     $html .= '<textarea name="' . "{$name}_{$field['name']}" . '"';
                     $html .= (isset($field['cols'])) ? ' cols="' . $field['cols'] . '"' : "";
@@ -202,12 +196,11 @@ class HTML extends DisplayEngine {
                     $html .= '</textarea></p>';
                     break;
                 case 'radio':
-                    if (!isset($field['name']) || !isset($field['value'])) {
+                    if (!isset($field['value'])) {
                         throw new Exception('Missing required field', 4);
                     }
                     $html .= "<p><span>{$field['label']}: </span>";
-                    $i = 0;
-                    foreach ($field['value'] as $item) {
+                    foreach ($field['value'] as $i => $item) {
                         if (!isset($item['label']) || !isset($item['value'])) {
                             throw new Exception('Missing required field', 5);
                         }
@@ -215,18 +208,16 @@ class HTML extends DisplayEngine {
                         $html .= (isset($item['checked']) && $item['checked']) ? 'checked="checked" ' : "";
                         $html .= (isset($item['disabled']) && $item['disabled']) ? 'disabled="disabled" ' : "";
                         $html .= '/><label class="radio" for="' . "{$name}_{$field['name']}[{$i}]" . '">' . $item['label'] . '</label>';
-                        $i++;
                     }
                     $html .= "</p>";
                     break;
                 case 'list':
                 case 'select':
-                    if (!isset($field['name']) || !isset($field['value'])) {
+                    if (!isset($field['value'])) {
                         throw new Exception('Missing required field', 6);
                     }
                     $html .= "<p><label for=\"{$name}_{$field['name']}\">{$field['label']}: </label>";
                     $html .= '<select id="' . "{$name}_{$field['name']}" . '" name="' . "{$name}_{$field['name']}" . '"';
-                    $html .= (isset($field['checked']) && $field['checked']) ? ' checked="checked"' : "";
                     $html .= (isset($field['disabled']) && $field['disabled']) ? ' disabled="disabled"' : "";
                     $html .= (isset($field['size'])) ? ' size="' . $field['size'] . '"' : "";
                     $html .= '>';
@@ -244,16 +235,11 @@ class HTML extends DisplayEngine {
                 case 'check':
                 case 'checkbox':
                 case 'box':
-                    if (!isset($field['name']) || !isset($field['value'])) {
+                    if (!isset($field['value'])) {
                         throw new Exception('Missing required field', 8);
                     }
                     $html .= "<p><span>{$field['label']}: </span>";
-                  /**
- * To make sure irrecoverable headers send the right header. It is reverted in 
- * JSON::display() 
- */
-header('HTTP/1.1 500 Internal Server Error');  $i = 0;
-                    foreach ($field['value'] as $item) {
+                    foreach ($field['value'] as $i => $item) {
                         if (!isset($item['label']) || !isset($item['value'])) {
                             throw new Exception('Missing required field', 9);
                         }
@@ -261,7 +247,6 @@ header('HTTP/1.1 500 Internal Server Error');  $i = 0;
                         $html .= (isset($item['checked']) && $item['checked']) ? 'checked="checked" ' : "";
                         $html .= (isset($item['disabled']) && $item['disabled']) ? 'disabled="disabled" ' : "";
                         $html .= '/><label class="radio" for="' . "{$name}_{$field['name']}[{$i}]" . '">' . $item['label'] . '</label>';
-                        $i++;
                     }
                     $html .= "</p>";
                     break;
