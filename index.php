@@ -61,6 +61,9 @@ header('Content-type: text/html; charset=utf-8');
     </noscript>
 </div>
 <div class="clear"></div>
+<div class="grid_4 mid_main" id="options" style="display: none;"></div>
+<div class="grid_8 mid_main" id="results" style="display: none;"></div>
+<div class="clear"></div>
 <div id="footer_link" class="grid_12">
     <ul class="nav">
         <li><a id="home" href="html.php?">Script List (home)</a></li>

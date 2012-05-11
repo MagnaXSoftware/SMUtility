@@ -358,10 +358,8 @@ class HTML extends DisplayEngine {
  */
 class JSON extends DisplayEngine {
     /**
-     * Generates and display a complete HTML page.
-     *
-     * @uses self::_header()
-     * @uses self::_footer()
+     * Generates and displays a JSON object.
+     * 
      * @param string $title Title of the page
      * @param string $content The main content of the page
      * @param array $context Metadata on the current plugin, if relevant
@@ -372,5 +370,18 @@ class JSON extends DisplayEngine {
         header('Content-type: application/json; charset=utf-8');
         echo json_encode($content);
         return true;
+    }
+    
+    /**
+     * Generates the display for the results of the plugin
+     *
+     * @param SMU_Executable $plugin Plugin object
+     * @param array $pluginValues Configuration values
+     * @return array
+     */
+    public static function generateResult(SMU_Executable $plugin, array &$pluginValues) {
+        $results = $plugin->execute($pluginValues);
+        unset($results['options']);
+        return $results;
     }
 }
