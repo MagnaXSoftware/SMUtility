@@ -3,47 +3,24 @@
  * SMUtility
  *
  * @package Core
- * @subpackage JSON
  */
 
 /**
  * Shorthand for DIRECTORY_SEPARATOR
  * @package Core
- * @subpackage JSON
  */
 define('DS', DIRECTORY_SEPARATOR);
 /**
  * Location of the root of the script
  * @package Core
- * @subpackage JSON
  */
 define('ROOT', '.' . DS);
-
 /**
- * JSON-ifies recoverable errors
- * 
- * @param int $code
- * @param string $string
- * @param string $file
- * @param int $line
- * @param array $context 
+ * Location of the assets directory.
+ * @package Core
+ * @subpackage Display 
  */
-function my_error_handler($code, $string, $file, $line, $context) {
-    header('HTTP/1.1 500 Internal Server Error');
-    header('Content-type: application/json; charset=utf-8');
-    
-    echo json_encode(array(
-        'code'      => $code,
-        'string'    => $string,
-        'file'      => $file,
-        'line'      => $line,
-    ));
-    exit;
-}
-if (function_exists('xdebug_disable')) {
-    xdebug_disable();
-}
-set_error_handler('my_error_handler', E_ALL);
+define('ASSET_DIR', 'assets/');
 
 require_once ROOT . 'display.php';
 require_once ROOT . 'functions.php';
@@ -61,7 +38,7 @@ if (isset($_GET['script']) && !empty($_GET['script'])) {
             $meta = Load::meta($_GET['script']);
         }
     } catch (Exception $e) {
-        JSON::display('Error', $e->getMessage());
+        HTML::display('Error', HTML::grid(HTML::box($e->getMessage())));
         exit();
     }
     /*
@@ -69,8 +46,15 @@ if (isset($_GET['script']) && !empty($_GET['script'])) {
      */
     if (isset($_GET['info'])) {
         ksort($meta);
-        JSON::display(null, $meta);
-        exit();
+        $content = "";
+        foreach ($meta as $key => $value) {
+            $content .= "<dt>{$key}</dt><dd>{$value}</dd>";
+        }
+        if ($_GET['script'] != 'core') {
+            HTML::display($meta['name'] . ' Info', HTML::grid(HTML::box(HTML::wrap('dl', $content))), $meta);
+        } else {
+            HTML::display($meta['name'] . ' Info', HTML::grid(HTML::box(HTML::wrap('dl', $content))));
+        }
     }
     /*
      * If do variable is set, execute script, display metadata and exit.
@@ -83,31 +67,31 @@ if (isset($_GET['script']) && !empty($_GET['script'])) {
             }
         }
         try {
-            JSON::display(null, JSON::generateResult($obj, $pluginValues));
+            HTML::display($meta['name'], HTML::generateResult($obj, $pluginValues), $meta);
             exit();
         } catch (Exception $e) {
-            JSON::display('Error', $e->getMessage());
+            HTML::display('Error', HTML::grid(HTML::box($e->getMessage())), $meta);
             exit();
         }
     }
     /*
      * Nothing else matched, so display configuration options and exit.
      */
-    JSON::display(null, JSON::generateForm($obj, $meta['ID']));
+    HTML::display($meta['ID'], HTML::generateForm($obj, $meta['ID']), $meta);
     exit();
 }
 
 /*
  * No script variable present, so display the list of plugins.
  */
-$content = array();
+$content = "";
 foreach (scandir(ROOT . 'plugins') as $item) {
     try {
         $meta = Load::meta($item);
-        $content[] = $meta;
+        $content .= '<li><a href="?script=' . $meta['ID'] . '">' . $meta['name'] . '</a> - <a href="?info&amp;script=' . $meta['ID'] . '">Info</a></li>';
     } catch (Exception $e) {
         // An exception signifies that the directory is not a plugin.
         // We skip that directory
     }
 }
-JSON::display(null, $content);
+HTML::display('Script List', HTML::grid(HTML::box(HTML::wrap('ul', $content))));

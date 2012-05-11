@@ -15,83 +15,68 @@ define('DS', DIRECTORY_SEPARATOR);
  * @package Core
  */
 define('ROOT', '.' . DS);
+/**
+ * Location of the assets directory.
+ * @package Core
+ * @subpackage Display 
+ */
+define('ASSET_DIR', 'assets/');
 
-require_once ROOT . 'display.php';
-require_once ROOT . 'functions.php';
-
-$systemMeta = array(
-    'ID' => 'core',
-    'name' => 'SMUtility',
-    'version' => '1.0',
-    'author' => 'AfroSoft'
-);
-
-/* first check for info command. If found, load meta from script */
-if (isset($_GET['info']) && isset($_GET['script']) && !empty($_GET['script'])) {
-    if ($_GET['script'] == 'core') {
-        $meta = $systemMeta;
-        $context = false;
-    } else {
-        try {
-            $meta = Load::meta($_GET['script']);
-        } catch (Exception $e) {
-            HTML::display('Error', HTML::grid(HTML::box($e->getMessage())));
-            exit();
-        }
-        $context = true;
-    }
-    ksort($meta);
-    $content = "";
-    foreach ($meta as $key => $value) {
-        $content .= "<dt>{$key}</dt><dd>{$value}</dd>";
-    }
-    if ($context == true) {
-        HTML::display($meta['name'] . ' Info', HTML::grid(HTML::box(HTML::wrap('dl', $content))), $meta);
-    } else {
-        HTML::display($meta['name'] . ' Info', HTML::grid(HTML::box(HTML::wrap('dl', $content))));
-    }
-    exit();
-}
-
-/* second check if a plugin has been specified, if so, load it and run the current view */
-if (isset($_GET['script']) && !empty($_GET['script'])) {
-    try {
-        $obj = Load::plugin($_GET['script']);
-        $meta = Load::meta($_GET['script']);
-    } catch (Exception $e) {
-        HTML::display('Error', HTML::grid(HTML::box($e->getMessage())));
-        exit();
-    }
-    if (isset($_GET['do'])) {
-        $pluginValues = array();
-        foreach ($_POST as $key => $value) {
-            if (strpos($key, $meta['ID']) !== false) {
-                $pluginValues[str_replace($meta['ID'] . '_', "", $key)] = $value;
-            }
-        }
-        try {
-            $content = HTML::generateResult($obj, $pluginValues);
-        } catch (Exception $e) {
-            HTML::display('Error', HTML::grid(HTML::box($e->getMessage())), $meta);
-            exit();
-        }
-    } else {
-        $content = HTML::generateForm($obj, $meta['ID']);
-    }
-    HTML::display($meta['name'], $content, $meta);
-    exit();
-}
-
-/* nothing matched so display index */
-$content = "";
-foreach (scandir(ROOT . 'plugins') as $item) {
-    try {
-        $meta = Load::meta($item);
-        $content .= '<li><a href="?script=' . $meta['ID'] . '">' . $meta['name'] . '</a> - <a href="?info&amp;script=' . $meta['ID'] . '">Info</a></li>';
-    } catch (Exception $e) {
-        // An exception signifies that the directory is not a plugin.
-        // We skip that directory
-    }
-}
-
-HTML::display('Script List', HTML::grid(HTML::box(HTML::wrap('ul', $content))));
+header('Content-type: text/html; charset=utf-8');
+?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+<head>
+<title>Loading... :: SMUtility</title>
+<meta charset="UTF-8">
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/reset.css" media="screen">
+<link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/text.css" media="screen">
+<link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/960.css" media="screen">
+<link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/layout.css" media="screen">
+<link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/nav.css" media="screen">
+<!--[if IE 6]><link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/ie6.css" media="screen"><![endif]-->
+<!--[if IE 7]><link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/ie.css" media="screen"><![endif]-->
+<link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/custom.css" media="screen">
+<script src="<?php echo ASSET_DIR?>js/jquery-1.7.2.min.js"></script>
+<script src="<?php echo ASSET_DIR?>js/formbuilder.js"></script>
+<script src="<?php echo ASSET_DIR?>js/custom.js"></script>
+    </head>
+<body>
+<div class="container_12">
+<div class="grid_12">
+    <h1 id="branding">Loading...</h1>
+</div>
+<div class="clear"></div>
+<div class="grid_12" id="main">
+    <div class="box center" id="loader">
+        <img src="<?php echo ASSET_DIR ?>img/loading.gif" height="32px" width="32px">
+    </div>
+    <div class="box" id="content" style="display: none;"></div>
+    <noscript>
+        <div class="box">
+            <p>Use of this interface requires javascript to be enabled.</p>
+            <p>If you wish not to enable javascript, please use the <a href="html.php">html interface</a>.</p>
+        </div>
+    </noscript>
+</div>
+<div class="clear"></div>
+<div class="grid_4 mid_main" id="options" style="display: none;"></div>
+<div class="grid_8 mid_main" id="results" style="display: none;"></div>
+<div class="clear"></div>
+<div id="footer_link" class="grid_12">
+    <ul class="nav">
+        <li><a id="home" href="html.php?">Script List (home)</a></li>
+        <li><a id="sys_info" href="html.php?info&amp;script=core">System Info</a></li>
+    </ul>
+</div>
+<div class="clear"></div>
+<div id="site_info" class="grid_12">
+    <div class="box">
+        <p>Copyrigth &copy; 2010-2012 AfroSoft</p>
+    </div>
+</div>
+<div class="clear"></div>
+</div>
+</body>
+</html>

@@ -46,4 +46,18 @@ class Load {
         }
         return parse_ini_file($file);
     }
+    
+    /**
+     * Loads the metadata for the core
+     * 
+     * @return array
+     * @throws Exception 
+     */
+    public static function systemMeta() {
+        $file = ROOT . DS . 'system.meta';
+        if (!file_exists($file)) {
+            throw new Exception("I cannot find the system metadata.");
+        }
+        return parse_ini_file($file);
+    }
 }
