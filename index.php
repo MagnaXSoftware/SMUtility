@@ -39,6 +39,7 @@ header('Content-type: text/html; charset=utf-8');
 <!--[if IE 7]><link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/ie.css" media="screen"><![endif]-->
 <link rel="stylesheet" type="text/css" href="<?php echo ASSET_DIR ?>css/custom.css" media="screen">
 <script src="<?php echo ASSET_DIR?>js/jquery-1.7.2.min.js"></script>
+<script src="<?php echo ASSET_DIR?>js/formbuilder.js"></script>
 <script src="<?php echo ASSET_DIR?>js/custom.js"></script>
     </head>
 <body>
